@@ -33,12 +33,14 @@ namespace MileStone_Game.Hubs
         public override async Task OnConnectedAsync()
         {
             Console.WriteLine("Client Connected");
+
             await base.OnConnectedAsync();
         }
 
-        public void SendToAll(string name, string message)
+        public void State()
         {
-            Clients.All.SendAsync("sendToAll", name, message);
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
+            Clients.All.SendAsync("state", jsonString);
         }
 
         public void NewPlayer()

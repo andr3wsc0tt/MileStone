@@ -23,8 +23,6 @@ class Game extends Component {
         
     }
 
-
-
     componentDidMount = () => {
 
         const hubConnection = new signalR.HubConnectionBuilder().withUrl("/gameServer").build();
@@ -36,13 +34,31 @@ class Game extends Component {
                     console.log('Connection started!');
                     this.state.hubConnection.invoke('NewPlayer');
                     setInterval(() => {
+                        this.state.hubConnection.invoke('state');
                         this.state.hubConnection.invoke('Movement', this.movement);
                     }, 1000 / 60);
                 })
                 .catch(err => console.log('Error establishing connection'));
-        });
 
-        
+            this.state.hubConnection.on('state', (players) => {
+                const canvas = this.canvasRef.current;
+                canvas.width = 600;
+                canvas.height = 400;
+                const context = canvas.getContext("2d");
+                context.clearRect(0, 0, 600, 400);
+                var playersObj = JSON.parse(players);
+                for (var id in playersObj) {
+                    var player = playersObj[id];
+                    console.log(players);
+                    console.log(player.x, player.y);
+                    context.beginPath();
+                    context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+                    context.fill();
+                }
+            });
+
+
+        });
 
         const canvas = this.canvasRef.current;
 
@@ -78,9 +94,6 @@ class Game extends Component {
                     break;
             }
         })
-
-        const context = canvas.getContext("2d");
-        context.fillRect(0, 0, canvas.width, canvas.height);
 
     };
 
