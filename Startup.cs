@@ -31,6 +31,7 @@ namespace MileStone_Game
 
             services.AddSignalR();
             services.AddControllersWithViews();
+            services.AddHostedService<Game>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

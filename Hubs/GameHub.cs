@@ -10,6 +10,11 @@ namespace MileStone_Game.Hubs
     {
 
         private static Dictionary<string, Position> players = new Dictionary<string, Position>();
+
+        public static Dictionary<string, Position> getPlayers()
+        {
+            return players;
+        }
         public class MovementClass
         {
             public bool left;
@@ -33,8 +38,14 @@ namespace MileStone_Game.Hubs
         public override async Task OnConnectedAsync()
         {
             Console.WriteLine("Client Connected");
-
             await base.OnConnectedAsync();
+        }
+
+        public override Task OnDisconnectedAsync(Exception ex)
+        {
+            Console.WriteLine("Client Disconnected");
+            players.Remove(Context.ConnectionId);
+            return base.OnDisconnectedAsync(ex);
         }
 
         public void State()

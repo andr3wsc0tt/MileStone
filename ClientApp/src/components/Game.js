@@ -34,7 +34,7 @@ class Game extends Component {
                     console.log('Connection started!');
                     this.state.hubConnection.invoke('NewPlayer');
                     setInterval(() => {
-                        this.state.hubConnection.invoke('state');
+                        //this.state.hubConnection.invoke('state');
                         this.state.hubConnection.invoke('Movement', this.movement);
                     }, 1000 / 60);
                 })
