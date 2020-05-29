@@ -8,8 +8,8 @@ class FormExample extends Component {
 
         this.state = {
             users: [],
-            username: " ",
-            password: " "
+            username: "",
+            password: ""
         };
     }
 
@@ -22,8 +22,7 @@ class FormExample extends Component {
 
     checkPassword = (name) => {
         var pass = this.state.users[name].password;
-        console.log(pass);
-        if (pass == this.state.password)
+        if (pass === this.state.password)
             return true;
         else
             return false;
@@ -31,14 +30,21 @@ class FormExample extends Component {
 
     validate = () => {
         var name = this.checkUsername();
-        if (name != -1) {
+        if (name !== -1) {
             if (this.checkPassword(name))
                 console.log("LOG IN");
             else
                 console.log("WRONG PASS");
         }
-        else
+        else {
+            var data = {
+                Username: this.state.username,
+                Password: this.state.password
+            };
+            this.addUser(data);
             console.log("NEW USER");
+        }
+            
     }
 
     onChangeUser = (e) => {
@@ -73,6 +79,17 @@ class FormExample extends Component {
         const response = await fetch('/api/Users');
         const data = await response.json();
         this.setState({ users: data });
+    }
+
+    async addUser(data) {
+        fetch('/api/Users', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
     }
 }
 export default FormExample
