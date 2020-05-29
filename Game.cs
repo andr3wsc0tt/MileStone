@@ -24,8 +24,6 @@ namespace MileStone_Game
                 await _hubContext.Clients.All.SendAsync("state", jsonString);
                 await Task.Delay(1000/60);
             }
-
-            
         }
     }
 }
