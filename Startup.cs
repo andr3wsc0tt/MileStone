@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MileStone_Game.Hubs;
+using MileStone_Game.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace MileStone_Game
 {
@@ -32,6 +34,9 @@ namespace MileStone_Game
             services.AddSignalR();
             services.AddControllersWithViews();
             services.AddHostedService<Game>();
+
+            services.AddDbContext<UserContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("UserContext")));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
