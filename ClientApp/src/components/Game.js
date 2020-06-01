@@ -12,6 +12,7 @@ class Game extends Component {
             player: '',
             players: [],
             hubConnection: null,
+            myString: ''
         };
 
         this.canvasRef = React.createRef();
@@ -20,7 +21,8 @@ class Game extends Component {
             up: false,
             down: false,
             left: false,
-            right: false
+            right: false,
+            space: false
         }    
     }
 
@@ -32,12 +34,17 @@ class Game extends Component {
 
         const hubConnection = new signalR.HubConnectionBuilder().withUrl("/gameServer").build();
 
+        var alive = true;
+
         this.setState({ hubConnection}, () => {
             this.state.hubConnection
                 .start()
                 .then(() => {
                     console.log('Connection started!');
-                    this.state.hubConnection.invoke('NewPlayer');
+                    this.state.hubConnection.invoke('NewPlayer')
+                        .then((connectionId) => {
+                            this.state.myString = connectionId;
+                        })
                     setInterval(() => {
                         this.state.hubConnection.invoke('Movement', this.movement);
                     }, 1000 / 60);
@@ -53,9 +60,22 @@ class Game extends Component {
                 var playersObj = JSON.parse(players);
                 for (var id in playersObj) {
                     var player = playersObj[id];
-                    context.beginPath();
-                    context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-                    context.fill();
+                    var color = "black";
+                    if (id == this.state.myString)
+                        color = "red";
+                    if (player.hp > 0)
+                        this.drawMe(context, player.x, player.y, player.angle, color);
+                    else if (player.death < 250) {
+                        this.explodeMe(context, player.x, player.y, player.death, color);
+                        if (id == this.state.myString) {
+                            this.alive = false;
+                        }
+                    }
+
+                    console.log(player);
+                    for (var bul in player.bullets) {
+                        this.drawBullet(context, player.bullets[bul].x, player.bullets[bul].y);
+                    }
                 }
             });
 
@@ -78,6 +98,9 @@ class Game extends Component {
                 case 83:
                     this.movement.down = true;
                     break;
+                case 32:
+                    this.movement.space = true;
+                    break;
             }
         })
         canvas.addEventListener('keyup', (event) => {
@@ -94,10 +117,63 @@ class Game extends Component {
                 case 83:
                     this.movement.down = false;
                     break;
+                case 32:
+                    this.movement.space = false;
+                    break;
             }
         })
 
     };
+
+    rotate = (cx, cy, x, y, angle) => {
+        var radians = (Math.PI / 180) * angle,
+            cos = Math.cos(radians),
+            sin = Math.sin(radians),
+            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+        return [nx, ny];
+    }
+
+    drawMe = (ctx, x, y, angle, color = "black") => {
+
+        var ax = x + 10;
+        var ay = y;
+
+        var bx = x - 15;
+        var by = y - 12.5;
+
+        var cx = x - 15;
+        var cy = y + 12.5;
+
+        var axD, ayD, bxD, byD, cxD, cyD;
+
+        [axD, ayD] = this.rotate(x, y, ax, ay, angle);
+        [bxD, byD] = this.rotate(x, y, bx, by, angle);
+        [cxD, cyD] = this.rotate(x, y, cx, cy, angle);
+
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.moveTo(axD, ayD);
+        ctx.lineTo(bxD, byD);
+        ctx.lineTo(cxD, cyD);
+        ctx.fill();
+    }
+
+    explodeMe = (ctx, x, y, death, color) =>{
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.rect(x - death, y + death, 10, 10);
+        ctx.rect(x + death, y + death, 10, 10);
+        ctx.rect(x + death, y - death, 10, 10);
+        ctx.rect(x - death, y - death, 10, 10);
+        ctx.fill();
+        }
+
+    drawBullet = (ctx, x, y) => {
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+    }
 
     render() {
         if (sessionStorage.getItem("loggedIn") != 'true') {
