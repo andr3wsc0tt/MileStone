@@ -2,6 +2,7 @@
 import * as signalR from '@aspnet/signalr';
 import { Redirect, Link, BrowserRouter as Router } from 'react-router-dom';
 import { Home } from './Home';
+import Chat from './Chat';
 
 class Game extends Component {
     constructor(props) {
@@ -21,8 +22,6 @@ class Game extends Component {
             left: false,
             right: false
         }    
-
-        
     }
 
     componentDidMount = () => {
@@ -101,18 +100,25 @@ class Game extends Component {
     };
 
     render() {
-        if (sessionStorage.getItem("loggedIn") != 'true')
+        if (sessionStorage.getItem("loggedIn") != 'true') {
+            console.log("EFF");
             return (
                 <Fragment>
-                <Router>
-                        <Link to="" component={Home} />
-                        <Redirect to="" />
-                    </Router>
+                    <Link to="" component={Home} />
+                    <Redirect to="./" />
                 </Fragment>
-                )
-        return (
-            <canvas ref={this.canvasRef} tabIndex="1"></canvas>
             )
+        }
+        else {
+            console.log("PPP");
+
+            return (
+                <Fragment>
+                    <canvas ref={this.canvasRef} tabIndex="1"></canvas>
+                    <Chat nick={sessionStorage.getItem("username")} />
+                </Fragment>
+            )
+        }
     }
 }
 

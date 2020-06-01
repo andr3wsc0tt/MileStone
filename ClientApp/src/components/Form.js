@@ -1,6 +1,7 @@
-﻿import React, { Component } from 'react'
+﻿import React, { Component, Fragment } from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Link, BrowserRouter as Router } from 'react-router-dom';
+import Game from './Game';
 
 class FormExample extends Component {
 
@@ -37,6 +38,7 @@ class FormExample extends Component {
                 console.log("LOG IN");
                 this.setState({ loggedIn: true });
                 sessionStorage.setItem("loggedIn", "true");
+                sessionStorage.setItem("username", this.state.username);
             }
             else
                 console.log("WRONG PASS");
@@ -75,8 +77,9 @@ class FormExample extends Component {
     }
 
     render() {
-        if (this.state.loggedIn == false)
-            return(
+        if (this.state.loggedIn == false) {
+            console.log("WTF");
+            return (
                 <Segment inverted>
                     <Form inverted>
                         <Form.Group>
@@ -89,10 +92,16 @@ class FormExample extends Component {
                     </Form>
                 </Segment>
             )
-        else
+        }
+        else {
+            console.log("HERE");
             return (
-                <Redirect to="./game" />
-                )
+                <Fragment>
+                    <Link to="" component={Game} />
+                    <Redirect to="/game" />
+                </Fragment>
+            )
+        }
     }
 
     async populateUserData() {
@@ -112,9 +121,10 @@ class FormExample extends Component {
         });
 
         if (response.ok) {
-            this.setState({ loggedIn: true });
             sessionStorage.setItem("loggedIn", "true");
+            sessionStorage.setItem("username", this.state.username);
             console.log("NEW USER");
+            this.setState({ loggedIn: true });
         }
         else {
             data = await response.json();

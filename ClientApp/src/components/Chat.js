@@ -14,7 +14,7 @@ class Chat extends Component {
     }
 
     componentDidMount = () => {
-        const nick = window.prompt('Your name:', 'John');
+        const nick = this.props.nick;
 
         const hubConnection = new signalR.HubConnectionBuilder().withUrl("/chatter").build();
 
