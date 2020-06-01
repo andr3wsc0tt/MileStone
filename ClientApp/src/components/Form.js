@@ -36,6 +36,7 @@ class FormExample extends Component {
             if (this.checkPassword(name)) {
                 console.log("LOG IN");
                 this.setState({ loggedIn: true });
+                sessionStorage.setItem("loggedIn", "true");
             }
             else
                 console.log("WRONG PASS");
@@ -112,6 +113,7 @@ class FormExample extends Component {
 
         if (response.ok) {
             this.setState({ loggedIn: true });
+            sessionStorage.setItem("loggedIn", "true");
             console.log("NEW USER");
         }
         else {

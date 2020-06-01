@@ -1,5 +1,7 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, Fragment } from 'react';
 import * as signalR from '@aspnet/signalr';
+import { Redirect, Link, BrowserRouter as Router } from 'react-router-dom';
+import { Home } from './Home';
 
 class Game extends Component {
     constructor(props) {
@@ -24,6 +26,10 @@ class Game extends Component {
     }
 
     componentDidMount = () => {
+
+        if (sessionStorage.getItem("loggedIn") != 'true') {
+            return;
+        }
 
         const hubConnection = new signalR.HubConnectionBuilder().withUrl("/gameServer").build();
 
@@ -95,6 +101,15 @@ class Game extends Component {
     };
 
     render() {
+        if (sessionStorage.getItem("loggedIn") != 'true')
+            return (
+                <Fragment>
+                <Router>
+                        <Link to="" component={Home} />
+                        <Redirect to="" />
+                    </Router>
+                </Fragment>
+                )
         return (
             <canvas ref={this.canvasRef} tabIndex="1"></canvas>
             )
