@@ -10,5 +10,6 @@ namespace MileStone_Game.Data
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<Score> Score { get; set; }
     }
 }
