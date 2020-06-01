@@ -1,5 +1,6 @@
 ﻿import React, { Component } from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
+import { Route, Redirect } from 'react-router-dom';
 
 class FormExample extends Component {
 
@@ -9,7 +10,8 @@ class FormExample extends Component {
         this.state = {
             users: [],
             username: "",
-            password: ""
+            password: "",
+            loggedIn: false
         };
     }
 
@@ -31,8 +33,10 @@ class FormExample extends Component {
     validate = () => {
         var name = this.checkUsername();
         if (name !== -1) {
-            if (this.checkPassword(name))
+            if (this.checkPassword(name)) {
                 console.log("LOG IN");
+                this.setState({ loggedIn: true });
+            }
             else
                 console.log("WRONG PASS");
         }
@@ -41,8 +45,18 @@ class FormExample extends Component {
                 Username: this.state.username,
                 Password: this.state.password
             };
-            this.addUser(data);
-            console.log("NEW USER");
+
+            const matches = this.state.users.map(user => 
+                user.username == this.state.username
+            )
+
+            console.log(matches)
+            if (!matches.includes(true)) {
+                this.addUser(data); 
+            }
+            else {
+                console.log("That User Exists");
+            }
         }
             
     }
@@ -60,19 +74,24 @@ class FormExample extends Component {
     }
 
     render() {
-        return(
-            <Segment inverted>
-                <Form inverted>
-                    <Form.Group>
-                        <Form.Input fluid label='Username' placeholder='Username' value={this.state.username} width={15} onChange={this.onChangeUser} />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Input fluid label='Password' placeholder='Password' value={this.state.password} width={15} onChange={this.onChangePass} />
-                    </Form.Group>
-                    <Button type='submit' onClick={this.validate}>Submit</Button>
-                </Form>
-            </Segment>
-        )
+        if (this.state.loggedIn == false)
+            return(
+                <Segment inverted>
+                    <Form inverted>
+                        <Form.Group>
+                            <Form.Input fluid label='Username' placeholder='Username' value={this.state.username} width={15} onChange={this.onChangeUser} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Input fluid label='Password' placeholder='Password' value={this.state.password} width={15} onChange={this.onChangePass} />
+                        </Form.Group>
+                        <Button type='submit' onClick={this.validate}>Submit</Button>
+                    </Form>
+                </Segment>
+            )
+        else
+            return (
+                <Redirect to="./game" />
+                )
     }
 
     async populateUserData() {
@@ -82,7 +101,7 @@ class FormExample extends Component {
     }
 
     async addUser(data) {
-        fetch('/api/Users', {
+        const response = await fetch('/api/Users', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -90,6 +109,15 @@ class FormExample extends Component {
             },
             body: JSON.stringify(data)
         });
+
+        if (response.ok) {
+            this.setState({ loggedIn: true });
+            console.log("NEW USER");
+        }
+        else {
+            data = await response.json();
+            console.log(data.status, data.errors);
+        }
     }
 }
 export default FormExample

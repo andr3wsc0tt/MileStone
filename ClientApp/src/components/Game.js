@@ -48,8 +48,6 @@ class Game extends Component {
                 var playersObj = JSON.parse(players);
                 for (var id in playersObj) {
                     var player = playersObj[id];
-                    console.log(players);
-                    console.log(player.x, player.y);
                     context.beginPath();
                     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
                     context.fill();
