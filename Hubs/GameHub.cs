@@ -19,11 +19,11 @@ namespace MileStone_Game.Hubs
 
         public class Bullet
         {
-            double x;
-            double y;
-            double angle;
-            double dx;
-            double dy;
+            public double x;
+            public double y;
+            public double angle;
+            public double dx;
+            public double dy;
             public Bullet(double x, double y, double angle)
             {
                 this.x = x;
@@ -125,6 +125,7 @@ namespace MileStone_Game.Hubs
                 
                 if (nowPress.Subtract(lastPress).TotalMilliseconds > 500)
                 {
+                    lastPress = nowPress;
                     players[Context.ConnectionId].bullets.Add(new Bullet(players[Context.ConnectionId].x, players[Context.ConnectionId].y, players[Context.ConnectionId].angle));
                 }
             }
