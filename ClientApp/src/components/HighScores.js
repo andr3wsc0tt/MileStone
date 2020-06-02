@@ -51,6 +51,13 @@ export class HighScores extends Component {
     async populateUserData() {
         const response = await fetch('/api/Scores');
         const data = await response.json();
-        this.setState({ users: data, loading: false });
+
+        data.sort((a, b) => {
+            return (a.highscore < b.highscore) - (a.highscore > b.highscore);
+        })
+
+        var top10 = data.slice(0, 10);
+
+        this.setState({ users: top10, loading: false });
     }
 }

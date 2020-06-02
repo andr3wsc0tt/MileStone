@@ -63,6 +63,7 @@ namespace MileStone_Game
 
                 if (player.Value.death >= 250)
                 {
+
                     players.Remove(player.Key);
                 }
             }
