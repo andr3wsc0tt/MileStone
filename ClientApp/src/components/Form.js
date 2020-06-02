@@ -14,6 +14,10 @@ class FormExample extends Component {
             password: "",
             loggedIn: false
         };
+
+        this.controller = new AbortController();
+        this.signal = this.controller;
+
     }
 
     checkUsername = () => {
@@ -76,6 +80,11 @@ class FormExample extends Component {
         this.populateUserData();
     }
 
+    componentWillUnmount() {
+        this.signal.abort();
+        console.log("UNMOUNT");
+    }
+
     render() {
         if (this.state.loggedIn == false) {
             console.log("WTF");
@@ -111,13 +120,15 @@ class FormExample extends Component {
     }
 
     async addUser(data) {
+        var sign = this.signal;
         const response = await fetch('/api/Users', {
+            sign,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
 
         if (response.ok) {

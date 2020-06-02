@@ -79,6 +79,7 @@ namespace MileStone_Game.Hubs
 
         public void State()
         {
+            Console.WriteLine("STATE");
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
             Clients.All.SendAsync("state", jsonString);
         }

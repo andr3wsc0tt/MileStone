@@ -24,16 +24,14 @@ export default class App extends Component {
     }
 
     render() {
-        console.log(this.state.loggedIn);
-    return (
-        <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/fetch-data' component={FetchData} />
-        <Route path='/chat' component={Chat} />
-        <Route path='/game' component={Game} />
-        <Route path='/highscores' component={HighScores} />
-        </Layout>
-    );
+        return (
+            <Layout>
+            <Route exact path='/' component={Home} />
+            <Route path='/counter' component={Counter} />
+            <Route path='/fetch-data' component={FetchData} />
+            <Route path='/game' component={Game} />
+            <Route path='/highscores' component={HighScores} />
+            </Layout>
+        );
   }
 }

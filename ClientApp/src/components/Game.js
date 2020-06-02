@@ -5,6 +5,9 @@ import { Home } from './Home';
 import Chat from './Chat';
 
 class Game extends Component {
+
+    _isMounted = false;
+
     constructor(props) {
         super(props);
 
@@ -16,6 +19,7 @@ class Game extends Component {
             myScore: 0
         };
 
+        this.interval = null;
         this.canvasRef = React.createRef();
 
         this.movement = {
@@ -27,11 +31,23 @@ class Game extends Component {
         }    
     }
 
+
+    componentWillUnmount = () => {
+        console.log("UNMOUNT");
+        console.log(this.state.hubConnection);
+        if (this.state.hubConnection) {
+            this.state.hubConnection.stop();
+            clearInterval(this.interval);
+        }
+    }
+
     componentDidMount = () => {
 
         if (sessionStorage.getItem("loggedIn") != 'true') {
             return;
         }
+
+        console.log("MOUNT");
 
         const hubConnection = new signalR.HubConnectionBuilder().withUrl("/gameServer").build();
 
@@ -46,11 +62,11 @@ class Game extends Component {
                         .then((connectionId) => {
                             this.state.myString = connectionId;
                         })
-                    var interval = setInterval(() => {
+                    this.interval = setInterval(() => {
                         if (alive == false) {
                             var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore }
                             this.addScore(data);
-                            clearInterval(interval);
+                            clearInterval(this.interval);
                         }
                         this.state.hubConnection.invoke('Movement', this.movement);
                     }, 1000 / 60);

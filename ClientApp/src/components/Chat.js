@@ -14,6 +14,9 @@ class Chat extends Component {
     }
 
     componentDidMount = () => {
+
+        console.log("Chat MOUNT");
+
         const nick = this.props.nick;
 
         const hubConnection = new signalR.HubConnectionBuilder().withUrl("/chatter").build();
@@ -31,6 +34,10 @@ class Chat extends Component {
             });
         });
     };
+
+    componentWillUnmount = () => {
+        console.log("Chat UNMOUNT");
+    }
 
     sendMessage = () => {
         this.state.hubConnection
