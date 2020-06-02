@@ -12,7 +12,8 @@ class Game extends Component {
             player: '',
             players: [],
             hubConnection: null,
-            myString: ''
+            myString: '',
+            myScore: 0
         };
 
         this.canvasRef = React.createRef();
@@ -47,6 +48,8 @@ class Game extends Component {
                         })
                     var interval = setInterval(() => {
                         if (alive == false) {
+                            var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore }
+                            this.addScore(data);
                             clearInterval(interval);
                         }
                         this.state.hubConnection.invoke('Movement', this.movement);
@@ -64,9 +67,11 @@ class Game extends Component {
                 for (var id in playersObj) {
                     var player = playersObj[id];
                     var color = "black";
-                    if (id == this.state.myString)
+                    if (id == this.state.myString) {
                         color = "red";
-                    if (player.hp > 0)
+                        this.state.myScore = player.score;
+                    }
+                    if (player.hp > 0) 
                         this.drawMe(context, player.x, player.y, player.angle, color);
                     else if (player.death < 250) {
                         this.explodeMe(context, player.x, player.y, player.death, color);
@@ -177,9 +182,20 @@ class Game extends Component {
         ctx.fill();
     }
 
+    async addScore(data) {
+        const response = await fetch('/api/Scores', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
     render() {
         if (sessionStorage.getItem("loggedIn") != 'true') {
-            console.log("EFF");
+
             return (
                 <Fragment>
                     <Link to="" component={Home} />
@@ -188,7 +204,6 @@ class Game extends Component {
             )
         }
         else {
-            console.log("PPP");
 
             return (
                 <Fragment>

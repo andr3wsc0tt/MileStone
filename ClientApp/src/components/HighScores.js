@@ -1,8 +1,8 @@
 ﻿import React, { Component } from 'react';
 
-export class UserList extends Component {
+export class HighScores extends Component {
 
-    static displayName = UserList.name;
+    static displayName = HighScores.name;
 
     constructor(props) {
         super(props);
@@ -18,17 +18,15 @@ export class UserList extends Component {
             <table className='table table-striped' aria-labelledby="tabelLabel">
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Username</th>
-                        <th>Password</th>
+                        <th>High Score</th>
                     </tr>
                 </thead>
                 <tbody>
                     {users.map(user =>
                         <tr key={user.id}>
-                            <td>{user.id}</td>
                             <td>{user.username}</td>
-                            <td>{user.password}</td>
+                            <td>{user.highscore}</td>
                         </tr>
                     )}
                 </tbody>
@@ -39,7 +37,7 @@ export class UserList extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : UserList.renderUsersTable(this.state.users);
+            : HighScores.renderUsersTable(this.state.users);
 
         return (
             <div>
@@ -51,7 +49,7 @@ export class UserList extends Component {
     }
 
     async populateUserData() {
-        const response = await fetch('/api/Users');
+        const response = await fetch('/api/Scores');
         const data = await response.json();
         this.setState({ users: data, loading: false });
     }
