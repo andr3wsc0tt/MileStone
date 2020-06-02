@@ -33,7 +33,7 @@ namespace MileStone_Game
                     {
                         if (player2.Key != player.Key)
                         {
-                            if (Math.Abs(player.Value.bullets[bul].x - player2.Value.x) + Math.Abs(player.Value.bullets[bul].y - player2.Value.y) < 20)
+                            if (Math.Abs(player.Value.bullets[bul].x - player2.Value.x) + Math.Abs(player.Value.bullets[bul].y - player2.Value.y) < 20 && player2.Value.hp > 0)
                             {
                                 player.Value.bullets.RemoveAt(bul);
                                 player2.Value.hp -= 1;
@@ -56,7 +56,7 @@ namespace MileStone_Game
         {
             foreach (var player in players)
             {
-                if (player.Value.hp == 0)
+                if (player.Value.hp <= 0)
                 {
                     player.Value.death += 1;
                 }

@@ -75,7 +75,6 @@ class Game extends Component {
                         }
                     }
 
-                    console.log(player);
                     for (var bul in player.bullets) {
                         this.drawBullet(context, player.bullets[bul].x, player.bullets[bul].y);
                     }
