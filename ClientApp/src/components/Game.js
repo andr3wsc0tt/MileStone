@@ -45,7 +45,10 @@ class Game extends Component {
                         .then((connectionId) => {
                             this.state.myString = connectionId;
                         })
-                    setInterval(() => {
+                    var interval = setInterval(() => {
+                        if (alive == false) {
+                            clearInterval(interval);
+                        }
                         this.state.hubConnection.invoke('Movement', this.movement);
                     }, 1000 / 60);
                 })
@@ -68,7 +71,7 @@ class Game extends Component {
                     else if (player.death < 250) {
                         this.explodeMe(context, player.x, player.y, player.death, color);
                         if (id == this.state.myString) {
-                            this.alive = false;
+                            alive = false;
                         }
                     }
 
