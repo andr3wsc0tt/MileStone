@@ -33,6 +33,11 @@ class Game extends Component {
 
 
     componentWillUnmount = () => {
+
+        if (sessionStorage.getItem("loggedIn") != 'true') {
+            return;
+        }
+
         console.log("UNMOUNT");
         console.log(this.state.hubConnection);
         if (this.state.hubConnection) {

@@ -4,6 +4,8 @@ import { Route, Redirect, Link, BrowserRouter as Router } from 'react-router-dom
 import Game from './Game';
 
 class FormExample extends Component {
+    _isMounted = false;
+
 
     constructor(props) {
         super(props);
@@ -14,9 +16,6 @@ class FormExample extends Component {
             password: "",
             loggedIn: false
         };
-
-        this.controller = new AbortController();
-        this.signal = this.controller;
 
     }
 
@@ -77,16 +76,20 @@ class FormExample extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+        console.log("MOUNT");
         this.populateUserData();
     }
 
     componentWillUnmount() {
-        this.signal.abort();
+        this._isMounted = false;
         console.log("UNMOUNT");
     }
 
     render() {
+
         if (this.state.loggedIn == false) {
+
             console.log("WTF");
             return (
                 <Segment inverted>
@@ -114,12 +117,16 @@ class FormExample extends Component {
     }
 
     async populateUserData() {
+
         const response = await fetch('/api/Users');
         const data = await response.json();
-        this.setState({ users: data });
+
+        if(this._isMounted)
+            this.setState({ users: data });
     }
 
     async addUser(data) {
+
         var sign = this.signal;
         const response = await fetch('/api/Users', {
             sign,
@@ -135,7 +142,7 @@ class FormExample extends Component {
             sessionStorage.setItem("loggedIn", "true");
             sessionStorage.setItem("username", this.state.username);
             console.log("NEW USER");
-            this.setState({ loggedIn: true });
+            {/*this.setState({ loggedIn: true });*/}
         }
         else {
             data = await response.json();
