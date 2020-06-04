@@ -127,9 +127,7 @@ class FormExample extends Component {
 
     async addUser(data) {
 
-        var sign = this.signal;
         const response = await fetch('/api/Users', {
-            sign,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -142,7 +140,7 @@ class FormExample extends Component {
             sessionStorage.setItem("loggedIn", "true");
             sessionStorage.setItem("username", this.state.username);
             console.log("NEW USER");
-            {/*this.setState({ loggedIn: true });*/}
+            this.setState({ loggedIn: true });
         }
         else {
             data = await response.json();
