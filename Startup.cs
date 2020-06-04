@@ -31,9 +31,9 @@ namespace MileStone_Game
                     .WithOrigins("http://localhost:3000");
             }));
 
-            services.AddSignalR();
+            services.AddSignalR().AddAzureSignalR("Endpoint = https://milestone.service.signalr.net;AccessKey=ikCuPKQX+nYm1pu+j4HOtTIox0zkVThUjyepDAWqz58=;Version=1.0;");
             services.AddControllersWithViews();
-            services.AddHostedService<Game>();
+            // services.AddHostedService<Game>();
 
             services.AddDbContext<UserContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("UserContext")));
@@ -73,8 +73,17 @@ namespace MileStone_Game
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+            });
+            /*
                 endpoints.MapHub<ChatHub>("/chatter");
                 endpoints.MapHub<GameHub>("/gameServer");
+            });
+            */
+
+            app.UseAzureSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatter");
+                routes.MapHub<GameHub>("/gameServer");
             });
 
             app.UseSpa(spa =>

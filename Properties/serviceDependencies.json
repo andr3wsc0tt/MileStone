@@ -4,6 +4,10 @@
       "type": "mssql",
       "connectionId": "UsersContext"
     },
+    "signalr1": {
+      "type": "signalr",
+      "connectionId": "Azure__SignalR__ConnectionString"
+    },
     "mssql2": {
       "type": "mssql",
       "connectionId": "UserContext"
