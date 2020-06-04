@@ -16,7 +16,9 @@ class Game extends Component {
             players: [],
             hubConnection: null,
             myString: '',
-            myScore: 0
+            myScore: 0,
+            canvasWidth: 0,
+            canvasHeight: 0
         };
 
         this.interval = null;
@@ -64,8 +66,10 @@ class Game extends Component {
                 .then(() => {
                     console.log('Connection started!');
                     this.state.hubConnection.invoke('NewPlayer')
-                        .then((connectionId) => {
-                            this.state.myString = connectionId;
+                        .then((initClass) => {
+                            var json =  JSON.parse(initClass);
+                            this.setState({ myString: json.connectionId, canvasHeight: json.canvasHeight, canvasWidth: json.canvasWidth });
+
                         })
                     this.interval = setInterval(() => {
                         if (alive == false) {
@@ -80,8 +84,8 @@ class Game extends Component {
 
             this.state.hubConnection.on('state', (players) => {
                 const canvas = this.canvasRef.current;
-                canvas.width = 600;
-                canvas.height = 400;
+                canvas.width = this.state.canvasWidth;
+                canvas.height = this.state.canvasHeight;
                 const context = canvas.getContext("2d");
                 context.clearRect(0, 0, 600, 400);
                 var playersObj = JSON.parse(players);

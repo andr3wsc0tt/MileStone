@@ -83,6 +83,20 @@ namespace MileStone_Game.Hubs
             }
         }
 
+        public class InitClass
+        {
+            public string connectionId;
+            public int canvasHeight;
+            public int canvasWidth;
+
+            public InitClass(string connectionId, int canvasHeight,int canvasWidth)
+            {
+                this.connectionId = connectionId;
+                this.canvasHeight = canvasHeight;
+                this.canvasWidth = canvasWidth;
+            }
+        }
+
         public override async Task OnConnectedAsync()
         {
             Console.WriteLine("Client Connected");
@@ -105,12 +119,16 @@ namespace MileStone_Game.Hubs
 
         public string NewPlayer()
         {
+            int canvasH = 900;
+            int canvasW = 1200;
+
             Console.WriteLine("New Player");
             Position pos = new Position(300, 300);
             players.Add(Context.ConnectionId, pos);
-            Console.WriteLine(players[Context.ConnectionId]);
-            return Context.ConnectionId;
-            
+
+            string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW));
+
+            return json;
         }
 
         public void Movement(object movement)
@@ -165,9 +183,6 @@ namespace MileStone_Game.Hubs
 
             double cx = x - 15.0;
             double cy = y + 12.5;
-
-
-            Console.WriteLine(cos.ToString(), sin.ToString(), x.ToString(), y.ToString());
 
             players[Context.ConnectionId].ax = (cos * (ax - x)) + (sin * (ay - y)) + x;
             players[Context.ConnectionId].ay = (cos * (ay - y)) - (sin * (ax - x)) + ay;
