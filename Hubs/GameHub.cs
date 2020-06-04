@@ -46,6 +46,14 @@ namespace MileStone_Game.Hubs
         {
             public double x;
             public double y;
+
+            public double ax;
+            public double ay;
+            public double bx;
+            public double by;
+            public double cx;
+            public double cy;
+
             public double angle;
             public int hp;
             public int death;
@@ -56,6 +64,17 @@ namespace MileStone_Game.Hubs
             {
                 this.x = x;
                 this.y = y;
+
+
+                ax = this.x + 10.0;
+                ay = this.y;
+
+                bx = this.x - 15.0;
+                by = this.y - 12.5;
+
+                cx = this.x - 15.0;
+                cy = this.y + 12.5;
+
                 this.angle = 0;
                 this.hp = 5;
                 this.death = 0;
@@ -96,7 +115,6 @@ namespace MileStone_Game.Hubs
 
         public void Movement(object movement)
         {
-            // Console.WriteLine(movement.ToString());
 
             MovementClass movementClass = JsonConvert.DeserializeObject<MovementClass>(movement.ToString());
 
@@ -104,6 +122,7 @@ namespace MileStone_Game.Hubs
             {
                 players[Context.ConnectionId].angle += 3;
                 players[Context.ConnectionId].angle %= 360;
+
             }
             if (movementClass.right)
             {
@@ -130,6 +149,34 @@ namespace MileStone_Game.Hubs
                     players[Context.ConnectionId].bullets.Add(new Bullet(players[Context.ConnectionId].x, players[Context.ConnectionId].y, players[Context.ConnectionId].angle));
                 }
             }
+
+            double radians = (Math.PI / 180.0) * players[Context.ConnectionId].angle;
+            double cos = Math.Cos(radians);
+            double sin = Math.Sin(radians);
+
+            double x = players[Context.ConnectionId].x;
+            double y = players[Context.ConnectionId].y;
+
+            double ax = x + 10.0;
+            double ay = y;
+
+            double bx = x - 15.0;
+            double by = y - 12.5;
+
+            double cx = x - 15.0;
+            double cy = y + 12.5;
+
+
+            Console.WriteLine(cos.ToString(), sin.ToString(), x.ToString(), y.ToString());
+
+            players[Context.ConnectionId].ax = (cos * (ax - x)) + (sin * (ay - y)) + x;
+            players[Context.ConnectionId].ay = (cos * (ay - y)) - (sin * (ax - x)) + ay;
+
+            players[Context.ConnectionId].bx = (cos * (bx - x)) + (sin * (by - y)) + x;
+            players[Context.ConnectionId].by = (cos * (by - y)) - (sin * (bx - x)) + y;
+
+            players[Context.ConnectionId].cx = (cos * (cx - x)) + (sin * (cy - y)) + x;
+            players[Context.ConnectionId].cy = (cos * (cy - y)) - (sin * (cx - x)) + y;
 
         }
     }

@@ -92,8 +92,9 @@ class Game extends Component {
                         color = "red";
                         this.state.myScore = player.score;
                     }
-                    if (player.hp > 0) 
-                        this.drawMe(context, player.x, player.y, player.angle, color);
+                    if (player.hp > 0) {
+                        this.drawMe(context, player.ax, player.ay, player.bx, player.by, player.cx, player.cy, color);
+                    }
                     else if (player.death < 250) {
                         this.explodeMe(context, player.x, player.y, player.death, color);
                         if (id == this.state.myString) {
@@ -153,37 +154,13 @@ class Game extends Component {
 
     };
 
-    rotate = (cx, cy, x, y, angle) => {
-        var radians = (Math.PI / 180) * angle,
-            cos = Math.cos(radians),
-            sin = Math.sin(radians),
-            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
-            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
-        return [nx, ny];
-    }
-
-    drawMe = (ctx, x, y, angle, color = "black") => {
-
-        var ax = x + 10;
-        var ay = y;
-
-        var bx = x - 15;
-        var by = y - 12.5;
-
-        var cx = x - 15;
-        var cy = y + 12.5;
-
-        var axD, ayD, bxD, byD, cxD, cyD;
-
-        [axD, ayD] = this.rotate(x, y, ax, ay, angle);
-        [bxD, byD] = this.rotate(x, y, bx, by, angle);
-        [cxD, cyD] = this.rotate(x, y, cx, cy, angle);
+    drawMe = (ctx, ax, ay, bx, by, cx, cy, color = "black") => {
 
         ctx.beginPath();
         ctx.fillStyle = color;
-        ctx.moveTo(axD, ayD);
-        ctx.lineTo(bxD, byD);
-        ctx.lineTo(cxD, cyD);
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+        ctx.lineTo(cx, cy);
         ctx.fill();
     }
 
