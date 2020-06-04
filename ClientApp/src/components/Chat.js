@@ -39,7 +39,17 @@ class Chat extends Component {
         console.log("Chat UNMOUNT");
     }
 
-    sendMessage = () => {
+    componentDidUpdate = () => {
+        const objDiv = document.getElementById("window");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    changeHandle = (e) => {
+        this.setState({ message: e.target.value });
+    }
+
+    sendMessage = (e) => {
+        e.preventDefault();
         this.state.hubConnection
             .invoke('sendToAll', this.state.nick, this.state.message)
             .catch(err => console.error(err));
@@ -47,22 +57,25 @@ class Chat extends Component {
         this.setState({ message: '' });
     }
     render() {
+
         return (
-            <div>
-                <br />
-                <input
-                    type="text"
-                    value={this.state.message}
-                    onChange={e => this.setState({ message: e.target.value })}
-                />
-
-                <button onClick={this.sendMessage}>Send</button>
-
-                <div>
+            <div className="chat">
+                <div id = "window">
                     {this.state.messages.map((message, index) => (
                         <span style={{ display: 'block' }} key={index}> {message} </span>
                     ))}
+
                 </div>
+                <br />
+                <form onSubmit={this.sendMessage}>
+                    <input id="chatform" type="text"
+                        value={this.state.message}
+                        onChange={this.changeHandle}/>
+                    <button type="submit">Send</button>
+                </form>
+
+                
+
             </div>
         )
     }

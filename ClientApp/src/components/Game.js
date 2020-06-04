@@ -87,7 +87,6 @@ class Game extends Component {
                 canvas.width = this.state.canvasWidth;
                 canvas.height = this.state.canvasHeight;
                 const context = canvas.getContext("2d");
-                context.clearRect(0, 0, 600, 400);
                 var playersObj = JSON.parse(players);
                 for (var id in playersObj) {
                     var player = playersObj[id];
@@ -209,7 +208,7 @@ class Game extends Component {
 
             return (
                 <Fragment>
-                    <canvas ref={this.canvasRef} tabIndex="1"></canvas>
+                    <canvas className = "game" ref={this.canvasRef} tabIndex="1"></canvas>
                     <Chat nick={sessionStorage.getItem("username")} />
                 </Fragment>
             )

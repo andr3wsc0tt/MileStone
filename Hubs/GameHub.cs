@@ -12,7 +12,7 @@ namespace MileStone_Game.Hubs
 
         public static int canvasH = 900;
         public static int canvasW = 1200;
-        private static int fireRate = 100;
+        private static int fireRate = 200;
 
         private static ConcurrentDictionary<string, Position> players = new ConcurrentDictionary<string, Position>();
         private static DateTime lastPress = DateTime.Now;
@@ -30,7 +30,7 @@ namespace MileStone_Game.Hubs
             public double dx;
             public double dy;
 
-            private static int bulletSpeed = 5;
+            private static double bulletSpeed = 10;
 
             public Bullet(double x, double y, double angle)
             {

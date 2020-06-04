@@ -21,3 +21,27 @@ code {
 .ui.page.modals.dimmer.transition.visible.active{
     height: 100%;
 }
+
+.container{
+    display: flex;
+    padding-left: 5px;
+    margin-left: 5px;
+
+}
+
+#window{
+    height: 85vh;
+    overflow: auto;
+    width: 30vw;
+}
+
+.chat {
+    margin-left: 25px;
+    border: black solid 1px;
+    width: 30vw;
+}
+
+#chatform{
+    width: 27vw;
+    margin-left:2px;
+}
