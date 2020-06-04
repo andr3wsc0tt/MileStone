@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using MileStone_Game.Hubs;
 using static MileStone_Game.Hubs.GameHub;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace MileStone_Game
 {
@@ -19,17 +21,26 @@ namespace MileStone_Game
             _hubContext = hubContext;
         }
 
-        public void checkAndRegisterHits(Dictionary<string, Position> players)
+        public void checkAndRegisterHits(ConcurrentDictionary<string, Position> players)
         {
-            
+            int canvasHeight = GameHub.canvasH;
+            int canvasWidth = GameHub.canvasW;
+
             foreach (var player in players)
             {
                 for (int bul = player.Value.bullets.Count - 1; bul >= 0; bul--)
                 {
+
                     player.Value.bullets[bul].x += player.Value.bullets[bul].dx;
                     player.Value.bullets[bul].y -= player.Value.bullets[bul].dy;
 
                     // if x < 0 or y < 0 or x > canvas.width or x > canvas.height !Remove
+
+                    if (player.Value.bullets[bul].x < 0 || player.Value.bullets[bul].x > canvasWidth || player.Value.bullets[bul].y < 0 || player.Value.bullets[bul].y > canvasHeight)
+                    {
+                        player.Value.bullets.RemoveAt(bul);
+                        break;
+                    }
 
                     foreach (var player2 in players)
                     {
@@ -54,7 +65,7 @@ namespace MileStone_Game
             }
         }
 
-        public void explosionAnimation(Dictionary<string, Position> players)
+        public void explosionAnimation(ConcurrentDictionary<string, Position> players)
         {
             foreach (var player in players)
             {
@@ -66,7 +77,7 @@ namespace MileStone_Game
                 if (player.Value.death >= 250)
                 {
 
-                    players.Remove(player.Key);
+                    players.TryRemove(player.Key, out _);
                 }
             }
         }
@@ -79,10 +90,17 @@ namespace MileStone_Game
                 var players = GameHub.getPlayers();
                 checkAndRegisterHits(players);
                 explosionAnimation(players);
-                
-                var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(GameHub.getPlayers());
-                await _hubContext.Clients.All.SendAsync("state", jsonString);
-                await Task.Delay(1000/60);
+
+                try
+                {
+                    var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
+                    await _hubContext.Clients.All.SendAsync("state", jsonString);
+                    await Task.Delay(1000 / 60);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
     }

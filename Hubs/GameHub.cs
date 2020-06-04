@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,10 +10,14 @@ namespace MileStone_Game.Hubs
     public class GameHub : Hub
     {
 
-        private static Dictionary<string, Position> players = new Dictionary<string, Position>();
+        public static int canvasH = 900;
+        public static int canvasW = 1200;
+        private static int fireRate = 100;
+
+        private static ConcurrentDictionary<string, Position> players = new ConcurrentDictionary<string, Position>();
         private static DateTime lastPress = DateTime.Now;
 
-        public static Dictionary<string, Position> getPlayers()
+        public static ConcurrentDictionary<string, Position> getPlayers()
         {
             return players;
         }
@@ -24,13 +29,16 @@ namespace MileStone_Game.Hubs
             public double angle;
             public double dx;
             public double dy;
+
+            private static int bulletSpeed = 5;
+
             public Bullet(double x, double y, double angle)
             {
                 this.x = x;
                 this.y = y;
                 this.angle = angle;
-                this.dx = Math.Cos(this.angle * (Math.PI / 180.0)) * 3;
-                this.dy = Math.Sin(this.angle * (Math.PI / 180.0)) * 3;
+                this.dx = Math.Cos(this.angle * (Math.PI / 180.0)) * bulletSpeed;
+                this.dy = Math.Sin(this.angle * (Math.PI / 180.0)) * bulletSpeed;
             }
         }
         public class MovementClass
@@ -106,7 +114,7 @@ namespace MileStone_Game.Hubs
         public override Task OnDisconnectedAsync(Exception ex)
         {
             Console.WriteLine("Client Disconnected");
-            players.Remove(Context.ConnectionId);
+            players.TryRemove(Context.ConnectionId, out _);
             return base.OnDisconnectedAsync(ex);
         }
 
@@ -115,16 +123,15 @@ namespace MileStone_Game.Hubs
             Console.WriteLine("STATE");
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
             Clients.All.SendAsync("state", jsonString);
+                        
         }
 
         public string NewPlayer()
         {
-            int canvasH = 900;
-            int canvasW = 1200;
 
             Console.WriteLine("New Player");
             Position pos = new Position(300, 300);
-            players.Add(Context.ConnectionId, pos);
+            players.TryAdd(Context.ConnectionId, pos);
 
             string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW));
 
@@ -133,7 +140,6 @@ namespace MileStone_Game.Hubs
 
         public void Movement(object movement)
         {
-
             MovementClass movementClass = JsonConvert.DeserializeObject<MovementClass>(movement.ToString());
 
             if (movementClass.left)
@@ -161,7 +167,7 @@ namespace MileStone_Game.Hubs
             {
                 DateTime nowPress = DateTime.Now;
                 
-                if (nowPress.Subtract(lastPress).TotalMilliseconds > 500)
+                if (nowPress.Subtract(lastPress).TotalMilliseconds > fireRate)
                 {
                     lastPress = nowPress;
                     players[Context.ConnectionId].bullets.Add(new Bullet(players[Context.ConnectionId].x, players[Context.ConnectionId].y, players[Context.ConnectionId].angle));
