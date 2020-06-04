@@ -31,7 +31,7 @@ namespace MileStone_Game
                     .WithOrigins("http://localhost:3000");
             }));
 
-            services.AddSignalR().AddAzureSignalR("Endpoint = https://milestone.service.signalr.net;AccessKey=ikCuPKQX+nYm1pu+j4HOtTIox0zkVThUjyepDAWqz58=;Version=1.0;");
+            services.AddSignalR().AddAzureSignalR("Endpoint=https://milestonesignalr.service.signalr.net;AccessKey=XA9ITqeqc5djn3uuApEED2DKbxsdogHfgO5TIYtPMcU=;Version=1.0;");
             services.AddControllersWithViews();
             // services.AddHostedService<Game>();
 

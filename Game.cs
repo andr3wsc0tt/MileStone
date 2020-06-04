@@ -29,6 +29,8 @@ namespace MileStone_Game
                     player.Value.bullets[bul].x += player.Value.bullets[bul].dx;
                     player.Value.bullets[bul].y -= player.Value.bullets[bul].dy;
 
+                    // if x < 0 or y < 0 or x > canvas.width or x > canvas.height !Remove
+
                     foreach (var player2 in players)
                     {
                         if (player2.Key != player.Key)
