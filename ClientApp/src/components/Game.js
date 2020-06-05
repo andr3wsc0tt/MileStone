@@ -84,6 +84,7 @@ class Game extends Component {
                         }
 
                         this.state.hubConnection.invoke('Movement', this.movement).catch(err => console.error("MEEEEES", err));
+                      
                     }, 1000 / 60);
                 })
                 .catch(err => console.log('Error establishing connection'));

@@ -4,22 +4,49 @@ import { Link } from 'react-router-dom';
 import './NavMenu.css';
 
 export class NavMenu extends Component {
-  static displayName = NavMenu.name;
+    static displayName = NavMenu.name;
 
-  constructor (props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
-  }
+        this.toggleNavbar = this.toggleNavbar.bind(this);
+        this.state = {
+            collapsed: true,
+            reload: false
+        };
+    }
 
-  toggleNavbar () {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
-  }
+    toggleNavbar() {
+        this.setState({
+            collapsed: !this.state.collapsed
+        });
+    }
+
+
+    async deleteUser() {
+        var username = sessionStorage.getItem('username');
+
+        const response = await fetch('/api/Users');
+        const data = await response.json();
+
+        for (var item in data) {
+            if (data[item].username == username) {
+
+                const response = await fetch(`/api/Users/${data[item].id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                });
+                sessionStorage.setItem('username', '');
+                sessionStorage.setItem('loggedIn', '');
+                window.location.reload(false);
+                console.log(data[item].id);
+            }
+        }
+    }
 
   render () {
     return (
@@ -41,7 +68,9 @@ export class NavMenu extends Component {
                 </NavItem>
               </ul>
             </Collapse>
-          </Container>
+            </Container>
+                <button onClick={this.deleteUser}>Delete User</button>
+          <button>Change Password</button>
         </Navbar>
       </header>
     );
