@@ -36,6 +36,7 @@ class Chat extends Component {
     };
 
     componentWillUnmount = () => {
+
         console.log("Chat UNMOUNT");
     }
 

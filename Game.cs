@@ -52,9 +52,9 @@ namespace MileStone_Game
                                 player2.Value.hp -= 1;
 
                                 if (player2.Value.hp == 0)
-                                    player.Value.score += 10;
+                                    player.Value.score += 25;
                                 else
-                                    player.Value.score += 5;
+                                    player.Value.score += 10;
                                 break;
 
                             }

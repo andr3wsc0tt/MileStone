@@ -35,7 +35,7 @@ class Game extends Component {
 
 
     componentWillUnmount = () => {
-
+        this._isMounted = false;
         if (sessionStorage.getItem("loggedIn") != 'true') {
             return;
         }
@@ -43,13 +43,18 @@ class Game extends Component {
         console.log("UNMOUNT");
         console.log(this.state.hubConnection);
         if (this.state.hubConnection) {
-            this.state.hubConnection.stop();
+
+            var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore }
+            this.addScore(data);
+
+
             clearInterval(this.interval);
+            this.setState({ hubConnection: this.state.hubConnection.stop() });
         }
     }
 
     componentDidMount = () => {
-
+        this._isMounted = true;
         if (sessionStorage.getItem("loggedIn") != 'true') {
             return;
         }
@@ -70,14 +75,15 @@ class Game extends Component {
                             var json =  JSON.parse(initClass);
                             this.setState({ myString: json.connectionId, canvasHeight: json.canvasHeight, canvasWidth: json.canvasWidth });
 
-                        })
+                        }).catch(err => console.error(err))
                     this.interval = setInterval(() => {
                         if (alive == false) {
                             var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore }
                             this.addScore(data);
                             clearInterval(this.interval);
                         }
-                        this.state.hubConnection.invoke('Movement', this.movement);
+
+                        this.state.hubConnection.invoke('Movement', this.movement).catch(err => console.error("MEEEEES", err));
                     }, 1000 / 60);
                 })
                 .catch(err => console.log('Error establishing connection'));

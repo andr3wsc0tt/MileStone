@@ -1,6 +1,7 @@
 ﻿import React, { Component } from 'react';
 
 export class HighScores extends Component {
+    _isMounted = false;
 
     static displayName = HighScores.name;
 
@@ -10,7 +11,17 @@ export class HighScores extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
+        console.log("MOUNT SCORE");
+
         this.populateUserData();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+
+        console.log("UNMOUNT SCORE");
     }
 
     static renderUsersTable(users) {
@@ -50,6 +61,7 @@ export class HighScores extends Component {
 
     async populateUserData() {
         const response = await fetch('/api/Scores');
+
         const data = await response.json();
 
         data.sort((a, b) => {
