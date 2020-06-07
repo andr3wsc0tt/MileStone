@@ -69,7 +69,7 @@ class Chat extends Component {
                 </div>
                 <br />
                 <form onSubmit={this.sendMessage}>
-                    <input id="chatform" type="text"
+                    <input id="chatform" type="text" autoComplete="off"
                         value={this.state.message}
                         onChange={this.changeHandle}/>
                     <button type="submit">Send</button>

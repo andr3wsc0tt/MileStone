@@ -74,11 +74,6 @@ namespace MileStone_Game
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-            /*
-                endpoints.MapHub<ChatHub>("/chatter");
-                endpoints.MapHub<GameHub>("/gameServer");
-            });
-            */
 
             app.UseAzureSignalR(routes =>
             {

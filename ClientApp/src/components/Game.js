@@ -190,8 +190,8 @@ class Game extends Component {
         ctx.fill();
     }
 
-    async addScore(data) {
-        const response = await fetch('/api/Scores', {
+    addScore(data) {
+        const response = fetch('/api/Scores', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -215,7 +215,7 @@ class Game extends Component {
 
             return (
                 <Fragment>
-                    <canvas className = "game" ref={this.canvasRef} tabIndex="1"></canvas>
+                    <canvas id = "game" ref={this.canvasRef} tabIndex="1"></canvas>
                     <Chat nick={sessionStorage.getItem("username")} />
                 </Fragment>
             )

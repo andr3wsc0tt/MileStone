@@ -88,7 +88,7 @@ class FormExample extends Component {
 
     render() {
 
-        if (this.state.loggedIn == false) {
+        if (this.state.loggedIn == false && sessionStorage.getItem('loggedIn') != 'true') {
 
             console.log("WTF");
             return (

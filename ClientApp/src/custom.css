@@ -35,6 +35,11 @@ code {
     width: 30vw;
 }
 
+#game{
+    height:  90vh;
+    width: 70vw;
+}
+
 .chat {
     margin-left: 25px;
     border: black solid 1px;

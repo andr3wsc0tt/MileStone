@@ -48,6 +48,34 @@ export class NavMenu extends Component {
         }
     }
 
+    async changePass() {
+        var username = sessionStorage.getItem('username');
+
+        const response = await fetch('/api/Users');
+        const data = await response.json();
+
+        for (var item in data) {
+            if (data[item].username == username) {
+
+                var newpass = window.prompt("New Password");
+
+                var newdata = { "id": data[item].id, "username": data[item].username, "password": newpass };
+
+                const response = await fetch(`/api/Users/${data[item].id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newdata),
+                });
+                
+                console.log(newdata);
+
+            }
+        }
+    }
+
   render () {
     return (
       <header>
@@ -70,7 +98,7 @@ export class NavMenu extends Component {
             </Collapse>
             </Container>
                 <button onClick={this.deleteUser}>Delete User</button>
-          <button>Change Password</button>
+                <button onClick={this.changePass}>Change Password</button>
         </Navbar>
       </header>
     );
