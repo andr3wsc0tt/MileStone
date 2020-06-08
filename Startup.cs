@@ -13,8 +13,8 @@ namespace MileStone_Game
 {
     public class Startup
     {
-        string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
-        // string connectionStringId = "UserContext"; // Connect to Azure DB
+        //string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
+        string connectionStringId = "UserContext"; // Connect to Azure DB
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
