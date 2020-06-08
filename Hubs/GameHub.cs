@@ -15,7 +15,7 @@ namespace MileStone_Game.Hubs
         private static int fireRate = 200;
 
         private static ConcurrentDictionary<string, Position> players = new ConcurrentDictionary<string, Position>();
-        private static DateTime lastPress = DateTime.Now;
+        private static ConcurrentDictionary<string, DateTime> lastPress = new ConcurrentDictionary<string, DateTime>();
 
         public static ConcurrentDictionary<string, Position> getPlayers()
         {
@@ -131,6 +131,7 @@ namespace MileStone_Game.Hubs
 
             Console.WriteLine("New Player");
             Position pos = new Position(300, 300);
+            lastPress.TryAdd(Context.ConnectionId, DateTime.Now);
             players.TryAdd(Context.ConnectionId, pos);
 
             string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW));
@@ -167,9 +168,9 @@ namespace MileStone_Game.Hubs
             {
                 DateTime nowPress = DateTime.Now;
                 
-                if (nowPress.Subtract(lastPress).TotalMilliseconds > fireRate)
+                if (nowPress.Subtract(lastPress[Context.ConnectionId]).TotalMilliseconds > fireRate)
                 {
-                    lastPress = nowPress;
+                    lastPress[Context.ConnectionId] = nowPress;
                     players[Context.ConnectionId].bullets.Add(new Bullet(players[Context.ConnectionId].x, players[Context.ConnectionId].y, players[Context.ConnectionId].angle));
                 }
             }

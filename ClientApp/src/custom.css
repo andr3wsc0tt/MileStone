@@ -35,9 +35,14 @@ code {
     width: 30vw;
 }
 
-#game{
-    height:  90vh;
+#window span{
+    font-family:fantasy;
+}
+
+#game {
+    height: 90vh;
     width: 70vw;
+    border: black solid 1px;
 }
 
 .chat {

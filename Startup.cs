@@ -13,6 +13,8 @@ namespace MileStone_Game
 {
     public class Startup
     {
+        string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
+        // string connectionStringId = "UserContext"; // Connect to Azure DB
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,11 +34,12 @@ namespace MileStone_Game
             }));
 
             services.AddSignalR().AddAzureSignalR("Endpoint=https://milestonesignalr.service.signalr.net;AccessKey=XA9ITqeqc5djn3uuApEED2DKbxsdogHfgO5TIYtPMcU=;Version=1.0;");
+            // services.AddSignalR(); Use for local instance.
+
             services.AddControllersWithViews();
-            // services.AddHostedService<Game>();
 
             services.AddDbContext<UserContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("UserContext")));
+            options.UseSqlServer(Configuration.GetConnectionString(connectionStringId)));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -80,6 +83,14 @@ namespace MileStone_Game
                 routes.MapHub<ChatHub>("/chatter");
                 routes.MapHub<GameHub>("/gameServer");
             });
+
+            /* For local instance
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatter");
+                routes.MapHub<GameHub>("/gameServer");
+            });
+            */
 
             app.UseSpa(spa =>
             {

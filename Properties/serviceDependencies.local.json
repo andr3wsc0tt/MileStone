@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "mssql2": {
-      "type": "mssql.local",
-      "connectionId": "UserContext"
-    },
     "mssql1": {
       "resourceId": "/subscriptions/[parameters('subscriptionId2')]/resourceGroups/[parameters('resourceGroup2')]/providers/Microsoft.Sql/servers/milestone-game-dbserver/databases/MileStone-Game_db",
       "type": "mssql.azure",
@@ -15,6 +11,12 @@
       "type": "signalr.azure",
       "connectionId": "Azure__SignalR__ConnectionString",
       "secretStore": "LocalSecretsFile"
+    },
+    "mssql2": {
+      "resourceId": null,
+      "type": "mssql.local",
+      "connectionId": "UserContextLocal",
+      "secretStore": null
     }
   }
 }

@@ -18,13 +18,7 @@ class FormExample extends Component {
             WrongPass: null,
             UserFieldBlank: null,
             PassFieldBlank: null
-
         };
-
-
-        
-        //this.FieldBlank = 'This field cannot be left blank';
-
     }
 
     checkUsername = () => {
