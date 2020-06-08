@@ -6,8 +6,6 @@ import Chat from './Chat';
 
 class Game extends Component {
 
-    _isMounted = false;
-
     constructor(props) {
         super(props);
 
@@ -35,7 +33,6 @@ class Game extends Component {
 
 
     componentWillUnmount = () => {
-        this._isMounted = false;
         if (sessionStorage.getItem("loggedIn") != 'true') {
             return;
         }
@@ -54,7 +51,6 @@ class Game extends Component {
     }
 
     componentDidMount = () => {
-        this._isMounted = true;
         if (sessionStorage.getItem("loggedIn") != 'true') {
             return;
         }

@@ -1,7 +1,6 @@
 ﻿import React, { Component } from 'react';
 
 export class HighScores extends Component {
-    _isMounted = false;
 
     static displayName = HighScores.name;
 
@@ -11,7 +10,6 @@ export class HighScores extends Component {
     }
 
     componentDidMount() {
-        this._isMounted = true;
 
         console.log("MOUNT SCORE");
 
@@ -19,7 +17,6 @@ export class HighScores extends Component {
     }
 
     componentWillUnmount() {
-        this._isMounted = false;
 
         console.log("UNMOUNT SCORE");
     }

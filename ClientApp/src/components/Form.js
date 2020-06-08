@@ -14,8 +14,16 @@ class FormExample extends Component {
             users: [],
             username: "",
             password: "",
-            loggedIn: false
+            loggedIn: false,
+            WrongPass: null,
+            UserFieldBlank: null,
+            PassFieldBlank: null
+
         };
+
+
+        
+        //this.FieldBlank = 'This field cannot be left blank';
 
     }
 
@@ -38,13 +46,13 @@ class FormExample extends Component {
         var name = this.checkUsername();
         if (name !== -1) {
             if (this.checkPassword(name)) {
-                console.log("LOG IN");
                 this.setState({ loggedIn: true });
                 sessionStorage.setItem("loggedIn", "true");
                 sessionStorage.setItem("username", this.state.username);
             }
-            else
-                console.log("WRONG PASS");
+            else {
+                this.setState({ WrongPass: 'Sorry, wrong password' });
+            }
         }
         else {
             var data = {
@@ -60,19 +68,18 @@ class FormExample extends Component {
             if (!matches.includes(true)) {
                 this.addUser(data); 
             }
-            else {
-                console.log("That User Exists");
-            }
         }
             
     }
 
     onChangeUser = (e) => {
-        this.setState({ username : e.target.value })
+        this.setState({ username: e.target.value })
+        this.setState({ UserFieldBlank: null });
     }
 
     onChangePass = (e) => {
         this.setState({ password: e.target.value })
+        this.setState({ PassFieldBlank: null, WrongPass: null });
     }
 
     componentDidMount() {
@@ -89,16 +96,14 @@ class FormExample extends Component {
     render() {
 
         if (this.state.loggedIn == false && sessionStorage.getItem('loggedIn') != 'true') {
-
-            console.log("WTF");
             return (
                 <Segment inverted>
                     <Form inverted>
                         <Form.Group>
-                            <Form.Input fluid label='Username' placeholder='Username' value={this.state.username} width={15} onChange={this.onChangeUser} />
+                            <Form.Input fluid label='Username' placeholder='Username' error={this.state.UserFieldBlank} value={this.state.username} width={15} onChange={this.onChangeUser} />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Input fluid label='Password' placeholder='Password' value={this.state.password} width={15} onChange={this.onChangePass} />
+                            <Form.Input fluid label='Password' placeholder='Password' error={this.state.WrongPass || this.state.PassFieldBlank} value={this.state.password} width={15} onChange={this.onChangePass} />
                         </Form.Group>
                         <Button type='submit' onClick={this.validate}>Submit</Button>
                     </Form>
@@ -106,7 +111,6 @@ class FormExample extends Component {
             )
         }
         else {
-            console.log("HERE");
             return (
                 <Fragment>
                     <Link to="" component={Game} />
@@ -144,7 +148,10 @@ class FormExample extends Component {
         }
         else {
             data = await response.json();
-            console.log(data.status, data.errors);
+            if (data.errors.Username != undefined)
+                this.setState({ UserFieldBlank: data.errors.Username[0] });
+            if (data.errors.Password != undefined)
+                this.setState({ PassFieldBlank: data.errors.Password[0] });
         }
     }
 }

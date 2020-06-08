@@ -32,6 +32,8 @@ export class NavMenu extends Component {
         for (var item in data) {
             if (data[item].username == username) {
 
+                // Add prompt to check for correct pass
+
                 const response = await fetch(`/api/Users/${data[item].id}`, {
                     method: 'DELETE',
                     headers: {
