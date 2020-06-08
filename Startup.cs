@@ -13,8 +13,8 @@ namespace MileStone_Game
 {
     public class Startup
     {
-        //string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
-        string connectionStringId = "UserContext"; // Connect to Azure DB
+        string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
+        //string connectionStringId = "UserContext"; // Connect to Azure DB
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,8 +33,8 @@ namespace MileStone_Game
                     .WithOrigins("http://localhost:3000");
             }));
 
-            services.AddSignalR().AddAzureSignalR("Endpoint=https://milestonesignalr.service.signalr.net;AccessKey=XA9ITqeqc5djn3uuApEED2DKbxsdogHfgO5TIYtPMcU=;Version=1.0;");
-            // services.AddSignalR(); Use for local instance.
+            //services.AddSignalR().AddAzureSignalR("Endpoint=https://milestonesignalr.service.signalr.net;AccessKey=XA9ITqeqc5djn3uuApEED2DKbxsdogHfgO5TIYtPMcU=;Version=1.0;");
+            services.AddSignalR(); // Use for local instance.
 
             services.AddControllersWithViews();
 
@@ -78,19 +78,19 @@ namespace MileStone_Game
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
+            /* For Azure instance
             app.UseAzureSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatter");
                 routes.MapHub<GameHub>("/gameServer");
             });
-
-            /* For local instance
+            */
+            /// For local instance
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatter");
                 routes.MapHub<GameHub>("/gameServer");
             });
-            */
 
             app.UseSpa(spa =>
             {
