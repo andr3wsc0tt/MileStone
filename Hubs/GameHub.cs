@@ -43,7 +43,6 @@ namespace MileStone_Game.Hubs
                 // dx and dy are the changes in x and y value after every more. Since bullets travel in a straight line with constant velocity it only needs to be calculated once to advance its Player every turn.
                 this.dx = (int)(Math.Cos(this.angle * (Math.PI / 180.0)) * bulletSpeed);
                 this.dy = (int)(Math.Sin(this.angle * (Math.PI / 180.0)) * bulletSpeed);
-                Console.WriteLine(this.dx.ToString(), this.dy.ToString());
             }
         }
         // Movement Class needed to deserialize the client data sent by 'Movement' Invocation.

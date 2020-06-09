@@ -90,21 +90,25 @@ namespace MileStone_Game
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                var players = GameHub.getPlayers();
-                checkAndRegisterHits(players);
-                explosionAnimation(players);
+            var players = GameHub.getPlayers();
+            if (players.Count > 0)
+                {
+                    checkAndRegisterHits(players);
+                    explosionAnimation(players);
 
-                try
-                {
-                    var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
-                    await _hubContext.Clients.All.SendAsync("state", jsonString);
-                    await Task.Delay(1000 / 60);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex);
+                    try
+                    {
+                        var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
+                        await _hubContext.Clients.All.SendAsync("state", jsonString);
+                        await Task.Delay(1000 / 60);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
             }
         }
