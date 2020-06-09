@@ -15,6 +15,7 @@ namespace MileStone_Game.Models
         [Required]
         public string Username { get; set; }
 
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{3,}$", ErrorMessage = "Password must contain at least 3 characters, one letter and one number")]
         [Required]
         public string Password { get; set; }
     }
