@@ -9,17 +9,18 @@ namespace MileStone_Game.Hubs
 {
     public class GameHub : Hub
     {
-
+        // Initialization variables - Height / Width / Fire Rate
         public static int canvasH = 900;
         public static int canvasW = 1200;
         private static int fireRate = 200;
 
-        private static ConcurrentDictionary<string, Position> players = new ConcurrentDictionary<string, Position>();
-        private static ConcurrentDictionary<string, DateTime> lastPress = new ConcurrentDictionary<string, DateTime>();
+        private static ConcurrentDictionary<string, Player> players = new ConcurrentDictionary<string, Player>(); // Holds all player Data
+        private static ConcurrentDictionary<string, DateTime> lastPress = new ConcurrentDictionary<string, DateTime>(); // Holds all player Input Timers
 
-        public static ConcurrentDictionary<string, Position> getPlayers()
+        // Passes all player information to the BackgroundService
+        public static ConcurrentDictionary<string, Player> getPlayers()
         {
-            return players;
+            return players; 
         }
 
         public class Bullet
@@ -30,17 +31,21 @@ namespace MileStone_Game.Hubs
             public double dx;
             public double dy;
 
-            private static double bulletSpeed = 10;
+            private static double bulletSpeed = 10; // Default bullet speed
 
             public Bullet(double x, double y, double angle)
             {
                 this.x = x;
                 this.y = y;
                 this.angle = angle;
+
+
+                // dx and dy are the changes in x and y value after every more. Since bullets travel in a straight line with constant velocity it only needs to be calculated once to advance its Player every turn.
                 this.dx = Math.Cos(this.angle * (Math.PI / 180.0)) * bulletSpeed;
                 this.dy = Math.Sin(this.angle * (Math.PI / 180.0)) * bulletSpeed;
             }
         }
+        // Movement Class needed to deserialize the client data sent by 'Movement' Invocation.
         public class MovementClass
         {
             public bool left;
@@ -50,11 +55,13 @@ namespace MileStone_Game.Hubs
             public bool space;
         }
 
-        public class Position
+        // Holds all Player data for a ship.
+        public class Player
         {
             public double x;
             public double y;
 
+            // Three points of Fuselage
             public double ax;
             public double ay;
             public double bx;
@@ -68,12 +75,12 @@ namespace MileStone_Game.Hubs
             public int score;
             public List<Bullet> bullets;
 
-            public Position(int x, int y)
+            public Player(int x, int y)
             {
                 this.x = x;
                 this.y = y;
 
-
+                // Default size of the ship.
                 ax = this.x + 10.0;
                 ay = this.y;
 
@@ -83,14 +90,15 @@ namespace MileStone_Game.Hubs
                 cx = this.x - 15.0;
                 cy = this.y + 12.5;
 
-                this.angle = 0;
-                this.hp = 5;
+                this.angle = 0; // Start out looking right.
+                this.hp = 5; // 5 Hits and you pass into The Great Unknown.
                 this.death = 0;
                 this.score = 0;
                 bullets = new List<Bullet>();
             }
         }
 
+        // Initializes canvas and player so that all values can be coded into the Hub.
         public class InitClass
         {
             public string connectionId;
@@ -104,49 +112,44 @@ namespace MileStone_Game.Hubs
                 this.canvasWidth = canvasWidth;
             }
         }
-
+        
+        // Signal Client Connection. 
         public override async Task OnConnectedAsync()
         {
-            Console.WriteLine("Client Connected");
+            //Console.WriteLine("Client Connected");
             await base.OnConnectedAsync();
         }
 
+        // On Disconnect remove the user's connection ID from the player dictionary. 
         public override Task OnDisconnectedAsync(Exception ex)
         {
-            Console.WriteLine("Client Disconnected");
+            //Console.WriteLine("Client Disconnected");
             players.TryRemove(Context.ConnectionId, out _);
             return base.OnDisconnectedAsync(ex);
         }
 
-        public void State()
-        {
-            Console.WriteLine("STATE");
-            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(players);
-            Clients.All.SendAsync("state", jsonString);
-                        
-        }
-
+        // Receive NewPlayer invocation from client and return their initialization details
         public string NewPlayer()
         {
+            //Console.WriteLine("New Player");
+            Player pos = new Player(300, 300); // Randomize this!
+            lastPress.TryAdd(Context.ConnectionId, DateTime.Now); // Initialize their FireRate Timer.
+            players.TryAdd(Context.ConnectionId, pos); // Initialize their position and connectionId
 
-            Console.WriteLine("New Player");
-            Position pos = new Position(300, 300);
-            lastPress.TryAdd(Context.ConnectionId, DateTime.Now);
-            players.TryAdd(Context.ConnectionId, pos);
-
-            string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW));
-
-            return json;
+            string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW)); // Serialize 
+            return json; // Send!
         }
 
+        // Get movement invocation
         public void Movement(object movement)
         {
+            // Deserialize the Key Stroke Object
             MovementClass movementClass = JsonConvert.DeserializeObject<MovementClass>(movement.ToString());
 
             if (movementClass.left)
             {
-                players[Context.ConnectionId].angle += 3;
-                players[Context.ConnectionId].angle %= 360;
+                players[Context.ConnectionId].angle += 3; // Turn rate
+                players[Context.ConnectionId].angle %= 360; // Keep the angle within 0 < x < 360
 
             }
             if (movementClass.right)
@@ -156,24 +159,30 @@ namespace MileStone_Game.Hubs
             }
             if (movementClass.up)
             {
-                players[Context.ConnectionId].x += Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5;
-                players[Context.ConnectionId].y -= Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5;
+                players[Context.ConnectionId].x += Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5; // X advance (based on angle)
+                players[Context.ConnectionId].y -= Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5; // Y advance (based on angle)
             }
             if (movementClass.down)
             {
                 players[Context.ConnectionId].x -= Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5;
                 players[Context.ConnectionId].y += Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5;
             }
-            if(movementClass.space)
+            if(movementClass.space) // SHOOT!
             {
-                DateTime nowPress = DateTime.Now;
+                DateTime nowPress = DateTime.Now; // Get Time Right Now!
                 
-                if (nowPress.Subtract(lastPress[Context.ConnectionId]).TotalMilliseconds > fireRate)
+                if (nowPress.Subtract(lastPress[Context.ConnectionId]).TotalMilliseconds > fireRate) // If time between now and last pressed is greater than our chosen fire rate. 
                 {
+                    // Update our last pressed time
                     lastPress[Context.ConnectionId] = nowPress;
-                    players[Context.ConnectionId].bullets.Add(new Bullet(players[Context.ConnectionId].x, players[Context.ConnectionId].y, players[Context.ConnectionId].angle));
+
+                    // Create a new Bullet and add it to that players List<Bullet>
+                    players[Context.ConnectionId].bullets.Add(new Bullet(players[Context.ConnectionId].x, players[Context.ConnectionId].y, players[Context.ConnectionId].angle)); 
                 }
             }
+
+            // This uses the updated movements to calculate the new coordinates of the ship. 
+            // Reference added.
 
             double radians = (Math.PI / 180.0) * players[Context.ConnectionId].angle;
             double cos = Math.Cos(radians);

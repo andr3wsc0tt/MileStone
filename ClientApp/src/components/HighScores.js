@@ -2,6 +2,8 @@
 
 export class HighScores extends Component {
 
+    // This is pretty much an unedited FetchData component from the React Template.
+
     static displayName = HighScores.name;
 
     constructor(props) {
@@ -10,15 +12,10 @@ export class HighScores extends Component {
     }
 
     componentDidMount() {
-
-        console.log("MOUNT SCORE");
-
         this.populateUserData();
     }
 
     componentWillUnmount() {
-
-        console.log("UNMOUNT SCORE");
     }
 
     static renderUsersTable(users) {
@@ -56,6 +53,7 @@ export class HighScores extends Component {
         );
     }
 
+    // Get all scores from HighScore Db - sort them from greatest to smallest - Then set the top 10 to be rendered.
     async populateUserData() {
         const response = await fetch('/api/Scores');
 

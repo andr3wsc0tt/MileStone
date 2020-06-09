@@ -15,18 +15,19 @@ class Chat extends Component {
 
     componentDidMount = () => {
 
-        console.log("Chat MOUNT");
-
         const nick = this.props.nick;
 
-        const hubConnection = new signalR.HubConnectionBuilder().withUrl("/chatter").build();
+        const hubConnection = new signalR.HubConnectionBuilder().withUrl("/chatter").build(); // Create Hub Connection
 
-        this.setState({ hubConnection, nick }, () => {
+        // Set up Hubconnection / nickname in state
+        this.setState({ hubConnection, nick }, () => { 
             this.state.hubConnection
                 .start()
                 .then(() => console.log('Connection started!'))
                 .catch(err => console.log('Error establishing connection'));
 
+
+            // On recieving 'sendToAll' message, create sent message and append it to messages state.
             this.state.hubConnection.on('sendToAll', (nick, receivedMessage) => {
                 const text = `${nick}: ${receivedMessage}`;
                 const messages = this.state.messages.concat([text]);
@@ -36,32 +37,34 @@ class Chat extends Component {
     };
 
     componentWillUnmount = () => {
-
         console.log("Chat UNMOUNT");
     }
 
     componentDidUpdate = () => {
+        // On update, set the scrollbar of the chat window to the bottom
         const objDiv = document.getElementById("window");
         objDiv.scrollTop = objDiv.scrollHeight;
     }
 
     changeHandle = (e) => {
+        // Handle typing from user
         this.setState({ message: e.target.value });
     }
 
     sendMessage = (e) => {
         e.preventDefault();
+        // On triggering sendMessage() invoke the hubconnection and 'sendToAll'. This message gets pushed to the Hub and then pushed to all clients connected to the hub.
         this.state.hubConnection
             .invoke('sendToAll', this.state.nick, this.state.message)
             .catch(err => console.error(err));
 
-        this.setState({ message: '' });
+        this.setState({ message: '' }); // Reset the 'message entering box' / chat form input
     }
     render() {
 
         return (
             <div className="chat">
-                <div id = "window">
+                <div id="window">  {/*Message Window*/}
                     {this.state.messages.map((message, index) => (
                         <span style={{ display: 'block' }} key={index}> {message} </span>
                     ))}

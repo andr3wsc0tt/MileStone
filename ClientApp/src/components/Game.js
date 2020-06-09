@@ -19,9 +19,10 @@ class Game extends Component {
             canvasHeight: 0
         };
 
-        this.interval = null;
-        this.canvasRef = React.createRef();
+        this.interval = null; // loop to send this.movement to the Hub every 1000/60 ms.
+        this.canvasRef = React.createRef(); // Special React canvas method.
 
+        // Key presses
         this.movement = {
             up: false,
             down: false,
@@ -31,84 +32,97 @@ class Game extends Component {
         }    
     }
 
-
+    // This lifecycle method requires diligent connection and login checking because it will unmount before a connection is made and throw errors.
     componentWillUnmount = () => {
+        
         if (sessionStorage.getItem("loggedIn") != 'true') {
+            // Don't unmount if you haven't logged in yet.
             return;
         }
 
-        console.log("UNMOUNT");
-        console.log(this.state.hubConnection);
+        // If you're still connected to the Hub and you're about to Unmount
         if (this.state.hubConnection) {
 
+            // Get username and highscore - add them to HighScore DB
             var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore }
             this.addScore(data);
 
-
+            // Clear the movement interval - then close connection to the hub.
             clearInterval(this.interval);
             this.setState({ hubConnection: this.state.hubConnection.stop() });
         }
     }
 
+    // Same stringent connection and login setting is required (mostly because I couldn't prevent double mount and unmount)
     componentDidMount = () => {
         if (sessionStorage.getItem("loggedIn") != 'true') {
+            // Don't mount if you're not logged in
             return;
         }
 
-        console.log("MOUNT");
+        const hubConnection = new signalR.HubConnectionBuilder().withUrl("/gameServer").build(); // Connect to GameHub
 
-        const hubConnection = new signalR.HubConnectionBuilder().withUrl("/gameServer").build();
+        var alive = true; // Truly?
 
-        var alive = true;
-
+        // All recurring calls have to be placed inside the hubConnection setState
+        // 'Movement' talks to the server and 'state' is the incoming state changes from the server
         this.setState({ hubConnection}, () => {
             this.state.hubConnection
                 .start()
                 .then(() => {
-                    console.log('Connection started!');
+                     // Initialize the user with their Hub ConnectionId / canvas Height & Width
                     this.state.hubConnection.invoke('NewPlayer')
                         .then((initClass) => {
-                            var json =  JSON.parse(initClass);
+                            var json =  JSON.parse(initClass); // From serialized InitClass (GameHub.cs)
                             this.setState({ myString: json.connectionId, canvasHeight: json.canvasHeight, canvasWidth: json.canvasWidth });
 
                         }).catch(err => console.error(err))
-                    this.interval = setInterval(() => {
+                    this.interval = setInterval(() => { // Movement call loop
+                        // To die, to sleep - no more.
                         if (alive == false) {
-                            var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore }
-                            this.addScore(data);
-                            clearInterval(this.interval);
+                            var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore } // Update Score
+                            this.addScore(data); // Push score to HighScore DB
+                            clearInterval(this.interval); // Clear interval so that it doesn't get called while we're dead
                         }
-
-                        this.state.hubConnection.invoke('Movement', this.movement).catch(err => console.error("MEEEEES", err));
+                        // This pasaes our key presses to the server (It errors sometimes, but the catch prevents a crash)
+                        // I couldn't stop it from being invoked after unmounting occured.
+                        // catch(err => console.error("MEEEEES", err) prints the error to console.
+                        this.state.hubConnection.invoke('Movement', this.movement).catch(err => err);
                       
-                    }, 1000 / 60);
+                    }, 1000 / 60); // FrameRate
                 })
                 .catch(err => console.log('Error establishing connection'));
 
+
+            // Get the updated state from the server / BackgroundService (Game.cs)
             this.state.hubConnection.on('state', (players) => {
+
+                // Set up canvas and context
                 const canvas = this.canvasRef.current;
                 canvas.width = this.state.canvasWidth;
                 canvas.height = this.state.canvasHeight;
                 const context = canvas.getContext("2d");
+
+                // Deserialize each player from the server.
                 var playersObj = JSON.parse(players);
                 for (var id in playersObj) {
-                    var player = playersObj[id];
-                    var color = "black";
-                    if (id == this.state.myString) {
+                    var player = playersObj[id]; // Current player being rendered
+                    var color = "black"; // Other Players
+                    if (id == this.state.myString) { // If the player I'm rendering is me. Color me Red. Update my Score.
                         color = "red";
-                        this.state.myScore = player.score;
+                        this.setState({ myScore: player.score });
                     }
-                    if (player.hp > 0) {
+                    if (player.hp > 0) { // If the player is alive. Draw.
                         this.drawMe(context, player.ax, player.ay, player.bx, player.by, player.cx, player.cy, color);
                     }
-                    else if (player.death < 250) {
-                        this.explodeMe(context, player.x, player.y, player.death, color);
-                        if (id == this.state.myString) {
-                            alive = false;
+                    else if (player.death < 250) { // After a player dies they have 250 cycles for their explosion
+                        this.explodeMe(context, player.x, player.y, player.death, color); // Explode them
+                        if (id == this.state.myString) { // If I died
+                            alive = false; // Set alive to false to trigger the clearInterval
                         }
                     }
 
-                    for (var bul in player.bullets) {
+                    for (var bul in player.bullets) { // Render each bullet
                         this.drawBullet(context, player.bullets[bul].x, player.bullets[bul].y);
                     }
                 }
@@ -117,27 +131,30 @@ class Game extends Component {
 
         });
 
-        const canvas = this.canvasRef.current;
+        const canvas = this.canvasRef.current; // Get Canvas from React.createRef();
 
+        // KeyDown
         canvas.addEventListener('keydown', (event) => {
             switch (event.keyCode) {
-                case 65:
+                case 65: // A
                     this.movement.left = true;
                     break;
-                case 87:
+                case 87: // W
                     this.movement.up = true;
                     break;
-                case 68:
+                case 68: // D
                     this.movement.right = true;
                     break;
-                case 83:
+                case 83: // S
                     this.movement.down = true;
                     break;
-                case 32:
+                case 32: // Space
                     this.movement.space = true;
                     break;
             }
         })
+
+        // KeyUp - same layout
         canvas.addEventListener('keyup', (event) => {
             switch (event.keyCode) {
                 case 65:
@@ -160,6 +177,7 @@ class Game extends Component {
 
     };
 
+    // draw the 3 points (ax,ay), (bx,by), (cx,cy) of the ship
     drawMe = (ctx, ax, ay, bx, by, cx, cy, color = "black") => {
 
         ctx.beginPath();
@@ -170,6 +188,7 @@ class Game extends Component {
         ctx.fill();
     }
 
+    // 4 rectanges exploding out at corners 10px every cycle
     explodeMe = (ctx, x, y, death, color) =>{
         ctx.fillStyle = color;
         ctx.beginPath();
@@ -179,13 +198,14 @@ class Game extends Component {
         ctx.rect(x - death, y - death, 10, 10);
         ctx.fill();
         }
-
+    // BOULLLETS!
     drawBullet = (ctx, x, y) => {
         ctx.beginPath();
         ctx.arc(x, y, 5, 0, 2 * Math.PI);
         ctx.fill();
     }
 
+    // Push (data) {username, score] to High Scores
     addScore(data) {
         const response = fetch('/api/Scores', {
             method: 'POST',
@@ -198,6 +218,7 @@ class Game extends Component {
     }
 
     render() {
+        // If you aren't logged in, get redirected {Home}
         if (sessionStorage.getItem("loggedIn") != 'true') {
 
             return (
@@ -208,7 +229,7 @@ class Game extends Component {
             )
         }
         else {
-
+            // Render game canvas, then the Chat component {pass username into chat as nickname}
             return (
                 <Fragment>
                     <canvas id = "game" ref={this.canvasRef} tabIndex="1"></canvas>

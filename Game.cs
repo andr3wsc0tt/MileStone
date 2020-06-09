@@ -12,49 +12,54 @@ using System.Linq;
 
 namespace MileStone_Game
 {
+    // This is the background service that acts as the updating server. (The hard part.)
     public class Game : BackgroundService
     {
-        private readonly IHubContext<GameHub> _hubContext;
+        private readonly IHubContext<GameHub> _hubContext; // Inject the GameHub Context
 
-        public Game(IHubContext<GameHub> hubContext)
+        public Game(IHubContext<GameHub> hubContext) 
         {
             _hubContext = hubContext;
         }
 
-        public void checkAndRegisterHits(ConcurrentDictionary<string, Position> players)
+        // Check hits and Remove bullets that leave the canvas.
+        public void checkAndRegisterHits(ConcurrentDictionary<string, Player> players)
         {
             int canvasHeight = GameHub.canvasH;
             int canvasWidth = GameHub.canvasW;
 
             foreach (var player in players)
             {
+                // Since we are removing objects from a list, we iterate backwards so that we don't remove an object then iterate onto an out of range value
                 for (int bul = player.Value.bullets.Count - 1; bul >= 0; bul--)
                 {
-
-                    player.Value.bullets[bul].x += player.Value.bullets[bul].dx;
+                    // Advance the bullet trajectory
+                    player.Value.bullets[bul].x += player.Value.bullets[bul].dx; 
                     player.Value.bullets[bul].y -= player.Value.bullets[bul].dy;
 
-                    // if x < 0 or y < 0 or x > canvas.width or x > canvas.height !Remove
-
+                    // If the bullet is out of the screen, remove it and continue
                     if (player.Value.bullets[bul].x < 0 || player.Value.bullets[bul].x > canvasWidth || player.Value.bullets[bul].y < 0 || player.Value.bullets[bul].y > canvasHeight)
                     {
                         player.Value.bullets.RemoveAt(bul);
-                        break;
+                        continue;
                     }
 
+                    // Check for hits
                     foreach (var player2 in players)
                     {
+                        // If you're not hitting yourself
                         if (player2.Key != player.Key)
                         {
+                            // If the Manhattan distance is less than 20...You're HIT!
                             if (Math.Abs(player.Value.bullets[bul].x - player2.Value.x) + Math.Abs(player.Value.bullets[bul].y - player2.Value.y) < 20 && player2.Value.hp > 0)
                             {
-                                player.Value.bullets.RemoveAt(bul);
-                                player2.Value.hp -= 1;
+                                player.Value.bullets.RemoveAt(bul); // Remove the bullet
+                                player2.Value.hp -= 1; // Take Damage
 
                                 if (player2.Value.hp == 0)
-                                    player.Value.score += 25;
+                                    player.Value.score += 25; // 25 points for a kill
                                 else
-                                    player.Value.score += 10;
+                                    player.Value.score += 10; // 10 points for a hit
                                 break;
 
                             }
@@ -65,7 +70,7 @@ namespace MileStone_Game
             }
         }
 
-        public void explosionAnimation(ConcurrentDictionary<string, Position> players)
+        public void explosionAnimation(ConcurrentDictionary<string, Player> players)
         {
             foreach (var player in players)
             {

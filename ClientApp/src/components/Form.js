@@ -21,15 +21,17 @@ class FormExample extends Component {
         };
     }
 
+    // Go through all the users 'fetched' from User API
     checkUsername = () => {
             var name = this.state.users.map(user =>
                 user.username
-        ).indexOf(this.state.username);
+        ).indexOf(this.state.username); // if user name is in Users DB then return that record's index (-1 if it doesn't exist)
         return name;
     }
 
+    // Check if returned record's index has matching password.
     checkPassword = (name) => {
-        var pass = this.state.users[name].password;
+        var pass = this.state.users[name].password; 
         if (pass === this.state.password)
             return true;
         else
@@ -38,6 +40,7 @@ class FormExample extends Component {
 
     validate = () => {
         var name = this.checkUsername();
+        // If username exists - check Password. Set state loggedIn to true and session storage variables loggedIn and username.
         if (name !== -1) {
             if (this.checkPassword(name)) {
                 this.setState({ loggedIn: true });
@@ -45,50 +48,41 @@ class FormExample extends Component {
                 sessionStorage.setItem("username", this.state.username);
             }
             else {
-                this.setState({ WrongPass: 'Sorry, wrong password' });
+                this.setState({ WrongPass: 'Sorry, wrong password' }); // Set error message
             }
         }
         else {
+            // If username doesn't exist - then create new user and new password.
             var data = {
                 Username: this.state.username,
                 Password: this.state.password
             };
-
-            const matches = this.state.users.map(user => 
-                user.username == this.state.username
-            )
-
-            console.log(matches)
-            if (!matches.includes(true)) {
-                this.addUser(data); 
-            }
+            this.addUser(data); 
         }
             
     }
 
-    onChangeUser = (e) => {
+    onChangeUser = (e) => { // Login username and reset error message
         this.setState({ username: e.target.value })
         this.setState({ UserFieldBlank: null });
     }
 
-    onChangePass = (e) => {
+    onChangePass = (e) => { // Login pass and reset error message
         this.setState({ password: e.target.value })
         this.setState({ PassFieldBlank: null, WrongPass: null });
     }
 
-    componentDidMount() {
-        this._isMounted = true;
-        console.log("MOUNT");
+    componentDidMount() { // On mount retrieve usernames from DB
+        this._isMounted = true; // Used to prevent asynchronous functions from updating unmounted components..(or something)
         this.populateUserData();
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-        console.log("UNMOUNT");
     }
 
     render() {
-
+        // Render the login page if you haven't logged in here, or if you haven't had session variable set.
         if (this.state.loggedIn == false && sessionStorage.getItem('loggedIn') != 'true') {
             return (
                 <Segment inverted>
@@ -97,6 +91,9 @@ class FormExample extends Component {
                             <Form.Input fluid label='Username' placeholder='Username' error={this.state.UserFieldBlank} value={this.state.username} width={15} onChange={this.onChangeUser} />
                         </Form.Group>
                         <Form.Group>
+
+                            {/* error is set such that it can trigger wrong password or blank invalid*/}
+
                             <Form.Input fluid label='Password' placeholder='Password' error={this.state.WrongPass || this.state.PassFieldBlank} value={this.state.password} width={15} onChange={this.onChangePass} />
                         </Form.Group>
                         <Button type='submit' onClick={this.validate}>Submit</Button>
@@ -114,6 +111,7 @@ class FormExample extends Component {
         }
     }
 
+    // Get Users DB from API endpoint
     async populateUserData() {
 
         const response = await fetch('/api/Users');
@@ -123,6 +121,7 @@ class FormExample extends Component {
             this.setState({ users: data });
     }
 
+    // Use POST API to push (data) which is newly created {username, password}
     async addUser(data) {
 
         const response = await fetch('/api/Users', {
@@ -134,13 +133,14 @@ class FormExample extends Component {
             body: JSON.stringify(data),
         });
 
+        // If POST is valid - set loggedIn and username session variables and setState loggedIn
         if (response.ok) {
             sessionStorage.setItem("loggedIn", "true");
             sessionStorage.setItem("username", this.state.username);
-            console.log("NEW USER");
             this.setState({ loggedIn: true });
         }
         else {
+            // If response was not good - check Username error header and Password error header and set one or both with error messages
             data = await response.json();
             if (data.errors.Username != undefined)
                 this.setState({ UserFieldBlank: data.errors.Username[0] });

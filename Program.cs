@@ -25,6 +25,7 @@ namespace MileStone_Game
                 })
                 .ConfigureServices(services =>
                 {
+                    // Start the background service after Startup
                     services.AddHostedService<Game>();
                 });
     }

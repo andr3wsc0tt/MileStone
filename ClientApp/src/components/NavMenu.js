@@ -3,6 +3,8 @@ import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLi
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 
+// This is the default NavBar of the React Template. With the 'U' and 'D' of CRUD 
+
 export class NavMenu extends Component {
     static displayName = NavMenu.name;
 
@@ -22,18 +24,20 @@ export class NavMenu extends Component {
         });
     }
 
-
+    // Get username from sessionStorage and Delete Record
     async deleteUser() {
         var username = sessionStorage.getItem('username');
 
         const response = await fetch('/api/Users');
         const data = await response.json();
 
+        // Check in the database for a match to our sessionStorage username variable
         for (var item in data) {
-            if (data[item].username == username) {
+            if (data[item].username == username) { // if username matches a record
 
                 // Add prompt to check for correct pass
 
+                // Delete the corresponding record using the records 'id'
                 const response = await fetch(`/api/Users/${data[item].id}`, {
                     method: 'DELETE',
                     headers: {
@@ -42,14 +46,16 @@ export class NavMenu extends Component {
                     },
                     body: JSON.stringify(data),
                 });
+
+                // Remove sessionsStorage variables and reload the window to trigger re-evaluation of login credentials
                 sessionStorage.setItem('username', '');
                 sessionStorage.setItem('loggedIn', '');
                 window.location.reload(false);
-                console.log(data[item].id);
             }
         }
     }
 
+    // Get username from sessionStorage and PUT new password.
     async changePass() {
         var username = sessionStorage.getItem('username');
 
@@ -59,10 +65,12 @@ export class NavMenu extends Component {
         for (var item in data) {
             if (data[item].username == username) {
 
-                var newpass = window.prompt("New Password");
+                var newpass = window.prompt("New Password"); // Prompt for new password.
 
+                // Set up new data object for JSON body.
                 var newdata = { "id": data[item].id, "username": data[item].username, "password": newpass };
 
+                // PUT updated 'newdata' to corresponding record id.
                 const response = await fetch(`/api/Users/${data[item].id}`, {
                     method: 'PUT',
                     headers: {
@@ -71,14 +79,14 @@ export class NavMenu extends Component {
                     },
                     body: JSON.stringify(newdata),
                 });
-                
-                console.log(newdata);
-
             }
         }
     }
 
-  render () {
+    render() {
+
+    // Just a Nav menu with Links and 2 buttons linked to delete the User and change User Pass.
+
     return (
       <header>
         <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>

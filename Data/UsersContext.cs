@@ -8,8 +8,10 @@ namespace MileStone_Game.Data
         {
 
         }
-
+        // User DB
         public DbSet<User> User { get; set; }
+
+        // HighScore DB
         public DbSet<Score> Score { get; set; }
     }
 }

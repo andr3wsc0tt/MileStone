@@ -7,14 +7,13 @@ class ModalExample extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { modalOpen: true }
+        this.state = { modalOpen: true } // Automatically pop up
     }
-
-    handleClose = () => this.setState({modalOpen: false})
 
     render() {
         return (
-            <Modal open={this.state.modalOpen} basic>
+            // open = true so the modal pops up
+            <Modal open={this.state.modalOpen} basic> 
                 <Modal.Header>Log In</Modal.Header>
                 <Modal.Content>
                     <Form/>
