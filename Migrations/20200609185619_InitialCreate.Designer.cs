@@ -9,8 +9,8 @@ using MileStone_Game.Data;
 namespace MileStone_Game.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200601173653_HighScore")]
-    partial class HighScore
+    [Migration("20200609185619_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
