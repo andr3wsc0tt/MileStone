@@ -12,7 +12,7 @@ namespace MileStone_Game.Hubs
         // Initialization variables - Height / Width / Fire Rate
         public static int canvasH = 900;
         public static int canvasW = 1200;
-        private static int fireRate = 200;
+        private static int fireRate = 100;
 
         private static ConcurrentDictionary<string, Player> players = new ConcurrentDictionary<string, Player>(); // Holds all player Data
         private static ConcurrentDictionary<string, DateTime> lastPress = new ConcurrentDictionary<string, DateTime>(); // Holds all player Input Timers
@@ -25,15 +25,15 @@ namespace MileStone_Game.Hubs
 
         public class Bullet
         {
-            public double x;
-            public double y;
-            public double angle;
-            public double dx;
-            public double dy;
+            public int x;
+            public int y;
+            public int angle;
+            public int dx;
+            public int dy;
 
-            private static double bulletSpeed = 10; // Default bullet speed
+            private static int bulletSpeed = 10; // Default bullet speed
 
-            public Bullet(double x, double y, double angle)
+            public Bullet(int x, int y, int angle)
             {
                 this.x = x;
                 this.y = y;
@@ -41,8 +41,9 @@ namespace MileStone_Game.Hubs
 
 
                 // dx and dy are the changes in x and y value after every more. Since bullets travel in a straight line with constant velocity it only needs to be calculated once to advance its Player every turn.
-                this.dx = Math.Cos(this.angle * (Math.PI / 180.0)) * bulletSpeed;
-                this.dy = Math.Sin(this.angle * (Math.PI / 180.0)) * bulletSpeed;
+                this.dx = (int)(Math.Cos(this.angle * (Math.PI / 180.0)) * bulletSpeed);
+                this.dy = (int)(Math.Sin(this.angle * (Math.PI / 180.0)) * bulletSpeed);
+                Console.WriteLine(this.dx.ToString(), this.dy.ToString());
             }
         }
         // Movement Class needed to deserialize the client data sent by 'Movement' Invocation.
@@ -58,18 +59,18 @@ namespace MileStone_Game.Hubs
         // Holds all Player data for a ship.
         public class Player
         {
-            public double x;
-            public double y;
+            public int x;
+            public int y;
 
             // Three points of Fuselage
-            public double ax;
-            public double ay;
-            public double bx;
-            public double by;
-            public double cx;
-            public double cy;
+            public int ax;
+            public int ay;
+            public int bx;
+            public int by;
+            public int cx;
+            public int cy;
 
-            public double angle;
+            public int angle;
             public int hp;
             public int death;
             public int score;
@@ -81,17 +82,17 @@ namespace MileStone_Game.Hubs
                 this.y = y;
 
                 // Default size of the ship.
-                ax = this.x + 10.0;
+                ax = this.x + 10;
                 ay = this.y;
 
-                bx = this.x - 15.0;
-                by = this.y - 12.5;
+                bx = this.x - 15;
+                by = this.y - 12;
 
-                cx = this.x - 15.0;
-                cy = this.y + 12.5;
+                cx = this.x - 15;
+                cy = this.y + 12;
 
                 this.angle = 0; // Start out looking right.
-                this.hp = 5; // 5 Hits and you pass into The Great Unknown.
+                this.hp = 100; // 5 Hits and you pass into The Great Unknown.
                 this.death = 0;
                 this.score = 0;
                 bullets = new List<Bullet>();
@@ -159,13 +160,13 @@ namespace MileStone_Game.Hubs
             }
             if (movementClass.up)
             {
-                players[Context.ConnectionId].x += Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5; // X advance (based on angle)
-                players[Context.ConnectionId].y -= Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5; // Y advance (based on angle)
+                players[Context.ConnectionId].x += (int)(Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5); // X advance (based on angle)
+                players[Context.ConnectionId].y -= (int)(Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5); // Y advance (based on angle)
             }
             if (movementClass.down)
             {
-                players[Context.ConnectionId].x -= Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5;
-                players[Context.ConnectionId].y += Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5;
+                players[Context.ConnectionId].x -= (int)(Math.Cos(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5);
+                players[Context.ConnectionId].y += (int)(Math.Sin(players[Context.ConnectionId].angle * (Math.PI / 180)) * 3.5);
             }
             if(movementClass.space) // SHOOT!
             {
@@ -184,30 +185,30 @@ namespace MileStone_Game.Hubs
             // This uses the updated movements to calculate the new coordinates of the ship. 
             // Reference added.
 
-            double radians = (Math.PI / 180.0) * players[Context.ConnectionId].angle;
-            double cos = Math.Cos(radians);
-            double sin = Math.Sin(radians);
+            float radians = (float)((Math.PI / 180.0) * players[Context.ConnectionId].angle);
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
 
-            double x = players[Context.ConnectionId].x;
-            double y = players[Context.ConnectionId].y;
+            int x = players[Context.ConnectionId].x;
+            int y = players[Context.ConnectionId].y;
 
-            double ax = x + 10.0;
-            double ay = y;
+            int ax = x + 10;
+            int ay = y;
 
-            double bx = x - 15.0;
-            double by = y - 12.5;
+            int bx = x - 15;
+            int by = y - 12;
 
-            double cx = x - 15.0;
-            double cy = y + 12.5;
+            int cx = x - 15;
+            int cy = y + 12;
 
-            players[Context.ConnectionId].ax = (cos * (ax - x)) + (sin * (ay - y)) + x;
-            players[Context.ConnectionId].ay = (cos * (ay - y)) - (sin * (ax - x)) + ay;
+            players[Context.ConnectionId].ax = (int)((cos * (ax - x)) + (sin * (ay - y)) + x);
+            players[Context.ConnectionId].ay = (int)((cos * (ay - y)) - (sin * (ax - x)) + ay);
 
-            players[Context.ConnectionId].bx = (cos * (bx - x)) + (sin * (by - y)) + x;
-            players[Context.ConnectionId].by = (cos * (by - y)) - (sin * (bx - x)) + y;
+            players[Context.ConnectionId].bx = (int)((cos * (bx - x)) + (sin * (by - y)) + x);
+            players[Context.ConnectionId].by = (int)((cos * (by - y)) - (sin * (bx - x)) + y);
 
-            players[Context.ConnectionId].cx = (cos * (cx - x)) + (sin * (cy - y)) + x;
-            players[Context.ConnectionId].cy = (cos * (cy - y)) - (sin * (cx - x)) + y;
+            players[Context.ConnectionId].cx = (int)((cos * (cx - x)) + (sin * (cy - y)) + x);
+            players[Context.ConnectionId].cy = (int)((cos * (cy - y)) - (sin * (cx - x)) + y);
 
         }
     }
