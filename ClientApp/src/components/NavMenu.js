@@ -62,10 +62,17 @@ export class NavMenu extends Component {
         const response = await fetch('/api/Users');
         const data = await response.json();
 
+        const regex = new RegExp("^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9]{3,}$");
+
         for (var item in data) {
             if (data[item].username === username) {
 
                 var newpass = window.prompt("New Password"); // Prompt for new password.
+
+                if (!regex.test(newpass)) {
+                    window.alert("Password must be 3 character, and have one letter and one number");
+                    return;
+                }
 
                 // Set up new data object for JSON body.
                 var newdata = { "id": data[item].id, "username": data[item].username, "password": newpass };
