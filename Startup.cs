@@ -76,17 +76,18 @@ namespace MileStone_Game
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<ChatHub>("/chatter"); // Comment out when using Azure
-                endpoints.MapHub<GameHub>("/gameServer"); // Comment out when using Azure
+                endpoints.MapHub<ChatHub>("/chatter"); // ************** Comment out when using Azure
+                endpoints.MapHub<GameHub>("/gameServer"); // ************* Comment out when using Azure
             });
 
-            /* // For Azure instance
+             /*// For Azure instance
             app.UseAzureSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatter");
                 routes.MapHub<GameHub>("/gameServer");
             });
-            */
+             */
+            
             
            
 

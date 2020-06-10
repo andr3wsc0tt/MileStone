@@ -15,8 +15,9 @@ class Game extends Component {
             hubConnection: null,
             myString: '',
             myScore: 0,
+            myHealth: 0,
             canvasWidth: 0,
-            canvasHeight: 0
+            canvasHeight: 0,
         };
 
         this.interval = null; // loop to send this.movement to the Hub every 1000/60 ms.
@@ -74,7 +75,7 @@ class Game extends Component {
                     this.state.hubConnection.invoke('NewPlayer')
                         .then((initClass) => {
                             var json =  JSON.parse(initClass); // From serialized InitClass (GameHub.cs)
-                            this.setState({ myString: json.connectionId, canvasHeight: json.canvasHeight, canvasWidth: json.canvasWidth });
+                            this.setState({ myString: json.connectionId, canvasHeight: json.canvasHeight, canvasWidth: json.canvasWidth, myHealth: json.myHealth });
 
                         }).catch(err => console.error(err))
                     this.interval = setInterval(() => { // Movement call loop
@@ -110,7 +111,7 @@ class Game extends Component {
                     var color = "black"; // Other Players
                     if (id === this.state.myString) { // If the player I'm rendering is me. Color me Red. Update my Score.
                         color = "red";
-                        this.setState({ myScore: player.score });
+                        this.setState({ myScore: player.score, myHealth: player.hp });
                     }
                     if (player.hp > 0) { // If the player is alive. Draw.
                         this.drawMe(context, player.ax, player.ay, player.bx, player.by, player.cx, player.cy, color);
@@ -236,6 +237,7 @@ class Game extends Component {
             // Render game canvas, then the Chat component {pass username into chat as nickname}
             return (
                 <Fragment>
+                    <h1>Score: {this.state.myScore} - Health: {this.state.myHealth} </h1>
                     <canvas id = "game" ref={this.canvasRef} tabIndex="1"></canvas>
                     <Chat nick={sessionStorage.getItem("username")} />
                 </Fragment>

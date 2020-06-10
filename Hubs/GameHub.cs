@@ -12,7 +12,7 @@ namespace MileStone_Game.Hubs
         // Initialization variables - Height / Width / Fire Rate
         public static int canvasH = 900;
         public static int canvasW = 1200;
-        private static int fireRate = 100;
+        private static int fireRate = 250;
 
         private static ConcurrentDictionary<string, Player> players = new ConcurrentDictionary<string, Player>(); // Holds all player Data
         private static ConcurrentDictionary<string, DateTime> lastPress = new ConcurrentDictionary<string, DateTime>(); // Holds all player Input Timers
@@ -91,7 +91,7 @@ namespace MileStone_Game.Hubs
                 cy = this.y + 12;
 
                 this.angle = 0; // Start out looking right.
-                this.hp = 100; // 5 Hits and you pass into The Great Unknown.
+                this.hp = 20; // 5 Hits and you pass into The Great Unknown.
                 this.death = 0;
                 this.score = 0;
                 bullets = new List<Bullet>();
@@ -104,12 +104,14 @@ namespace MileStone_Game.Hubs
             public string connectionId;
             public int canvasHeight;
             public int canvasWidth;
+            public int myHealth;
 
-            public InitClass(string connectionId, int canvasHeight,int canvasWidth)
+            public InitClass(string connectionId, int canvasHeight,int canvasWidth, int myHealth)
             {
                 this.connectionId = connectionId;
                 this.canvasHeight = canvasHeight;
                 this.canvasWidth = canvasWidth;
+                this.myHealth = myHealth;
             }
         }
         
@@ -136,7 +138,7 @@ namespace MileStone_Game.Hubs
             lastPress.TryAdd(Context.ConnectionId, DateTime.Now); // Initialize their FireRate Timer.
             players.TryAdd(Context.ConnectionId, pos); // Initialize their position and connectionId
 
-            string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW)); // Serialize 
+            string json = JsonConvert.SerializeObject(new InitClass(Context.ConnectionId, canvasH, canvasW, pos.hp)); // Serialize 
             return json; // Send!
         }
 
