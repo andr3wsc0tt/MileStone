@@ -59,3 +59,10 @@ code {
 a:active{
     color: red; 
 }
+
+.score{
+    position:absolute;
+    display: inline;
+    margin-left: 23vw;
+    font-size:1.5vw;
+}

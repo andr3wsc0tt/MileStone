@@ -109,7 +109,7 @@ class Game extends Component {
                 for (var id in playersObj) {
                     var player = playersObj[id]; // Current player being rendered
                     var color = "black"; // Other Players
-                    if (id === this.state.myString) { // If the player I'm rendering is me. Color me Red. Update my Score.
+                    if (id === this.state.myString) { // If the player I'm rendering is me. Color me Red. Update my Score and Health.
                         color = "red";
                         this.setState({ myScore: player.score, myHealth: player.hp });
                     }
@@ -118,7 +118,7 @@ class Game extends Component {
                     }
                     else if (player.death < 250) { // After a player dies they have 250 cycles for their explosion
                         this.explodeMe(context, player.x, player.y, player.death, color); // Explode them
-                        if (id === this.state.myString) { // If I died
+                        if (id === this.state.myString) { // If I! died
                             alive = false; // Set alive to false to trigger the clearInterval
                         }
                     }
@@ -237,7 +237,7 @@ class Game extends Component {
             // Render game canvas, then the Chat component {pass username into chat as nickname}
             return (
                 <Fragment>
-                    <h1>Score: {this.state.myScore} - Health: {this.state.myHealth} </h1>
+                    <h1 className="score" >Score: {this.state.myScore} - Health: {this.state.myHealth} </h1>
                     <canvas id = "game" ref={this.canvasRef} tabIndex="1"></canvas>
                     <Chat nick={sessionStorage.getItem("username")} />
                 </Fragment>
