@@ -13,8 +13,8 @@ namespace MileStone_Game
 {
     public class Startup
     {
-        string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
-        //string connectionStringId = "UserContext"; // Connect to Azure DB
+        //string connectionStringId = "UserContextLocal"; // Connect to local SQL Database
+        string connectionStringId = "UserContext"; // Connect to Azure DB
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -76,17 +76,17 @@ namespace MileStone_Game
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<ChatHub>("/chatter"); // ************** Comment out when using Azure
-                endpoints.MapHub<GameHub>("/gameServer"); // ************* Comment out when using Azure
+                //endpoints.MapHub<ChatHub>("/chatter"); // ************** Comment out when using Azure
+                //endpoints.MapHub<GameHub>("/gameServer"); // ************* Comment out when using Azure
             });
 
-             /*// For Azure instance
+             // For Azure instance
             app.UseAzureSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatter");
                 routes.MapHub<GameHub>("/gameServer");
             });
-             */
+             
             
             
            
