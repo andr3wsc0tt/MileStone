@@ -28,16 +28,16 @@ I also didn't use wireframes because there is no actual design or style.
 Home Page (Login Modal) only accepts Usernames with correct passwords or Unique usernames with passwords that include 3 chars. one digit and one letter. No Blank fields.
 Any of these criteria being broken will prompt visual alerts.
 
-Test 1:
-Username: I4MUN1QU3
-Password: 
-Results:
-Error: "Password cannot be blank"
+Test 1:  
+Username: I4MUN1QU3  
+Password:  
+Results:  
+Error: "Password cannot be blank"  
 
-Test 2:
-Username: iMUn1Qu3
-Password: pass
-Error: "Password must be at least 3 characters, contain one letter, and one digit"
+Test 2:  
+Username: iMUn1Qu3  
+Password: pass  
+Error: "Password must be at least 3 characters, contain one letter, and one digit"  
 
 There aren't many place for user input except for the canvas, which needs to be determinate; So resolving all exceptions and logic errors has been attempted.
 
