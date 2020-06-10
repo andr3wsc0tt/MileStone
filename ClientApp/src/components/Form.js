@@ -1,6 +1,6 @@
 ﻿import React, { Component, Fragment } from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
-import { Route, Redirect, Link, BrowserRouter as Router } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import Game from './Game';
 
 class FormExample extends Component {
@@ -83,7 +83,7 @@ class FormExample extends Component {
 
     render() {
         // Render the login page if you haven't logged in here, or if you haven't had session variable set.
-        if (this.state.loggedIn == false && sessionStorage.getItem('loggedIn') != 'true') {
+        if (this.state.loggedIn === false && sessionStorage.getItem('loggedIn') !== 'true') {
             return (
                 <Segment inverted>
                     <Form inverted>
@@ -142,9 +142,9 @@ class FormExample extends Component {
         else {
             // If response was not good - check Username error header and Password error header and set one or both with error messages
             data = await response.json();
-            if (data.errors.Username != undefined)
+            if (data.errors.Username !== undefined)
                 this.setState({ UserFieldBlank: data.errors.Username[0] });
-            if (data.errors.Password != undefined)
+            if (data.errors.Password !== undefined)
                 this.setState({ PassFieldBlank: data.errors.Password[0] });
         }
     }

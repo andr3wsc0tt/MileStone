@@ -1,5 +1,6 @@
 ﻿import React, { Component } from 'react'
-import { Button, Header, Image, Modal } from 'semantic-ui-react'
+import { Modal, Image } from 'semantic-ui-react'
+import myImage from '../keyboard.png'
 import Form from './Form'
 
 
@@ -16,7 +17,8 @@ class ModalExample extends Component {
             <Modal open={this.state.modalOpen} basic> 
                 <Modal.Header>Log In</Modal.Header>
                 <Modal.Content>
-                    <Form/>
+                    <Form />
+                    <Image src={myImage}/>
                 </Modal.Content>
             </Modal>
         )

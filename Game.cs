@@ -23,7 +23,8 @@ namespace MileStone_Game
         }
 
         // Check hits and Remove bullets that leave the canvas.
-        public void checkAndRegisterHits(ConcurrentDictionary<string, Player> players)
+
+        public void CheckAndRegisterHits(ConcurrentDictionary<string, Player> players)
         {
             int canvasHeight = GameHub.canvasH;
             int canvasWidth = GameHub.canvasW;
@@ -70,7 +71,7 @@ namespace MileStone_Game
             }
         }
 
-        public void explosionAnimation(ConcurrentDictionary<string, Player> players)
+        public void ExplosionAnimation(ConcurrentDictionary<string, Player> players)
         {
             foreach (var player in players)
             {
@@ -96,8 +97,8 @@ namespace MileStone_Game
             var players = GameHub.getPlayers();
             if (players.Count > 0)
                 {
-                    checkAndRegisterHits(players);
-                    explosionAnimation(players);
+                    CheckAndRegisterHits(players);
+                    ExplosionAnimation(players);
 
                     try
                     {

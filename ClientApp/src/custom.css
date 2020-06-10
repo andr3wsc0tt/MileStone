@@ -55,3 +55,7 @@ code {
     width: 27vw;
     margin-left:2px;
 }
+
+a:active{
+    color: red; 
+}

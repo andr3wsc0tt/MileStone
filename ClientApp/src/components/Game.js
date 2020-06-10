@@ -1,6 +1,6 @@
 ﻿import React, { Component, Fragment } from 'react';
 import * as signalR from '@aspnet/signalr';
-import { Redirect, Link, BrowserRouter as Router } from 'react-router-dom';
+import { Redirect, Link} from 'react-router-dom';
 import { Home } from './Home';
 import Chat from './Chat';
 
@@ -35,7 +35,7 @@ class Game extends Component {
     // This lifecycle method requires diligent connection and login checking because it will unmount before a connection is made and throw errors.
     componentWillUnmount = () => {
         
-        if (sessionStorage.getItem("loggedIn") != 'true') {
+        if (sessionStorage.getItem("loggedIn") !== 'true') {
             // Don't unmount if you haven't logged in yet.
             return;
         }
@@ -55,7 +55,7 @@ class Game extends Component {
 
     // Same stringent connection and login setting is required (mostly because I couldn't prevent double mount and unmount)
     componentDidMount = () => {
-        if (sessionStorage.getItem("loggedIn") != 'true') {
+        if (sessionStorage.getItem("loggedIn") !== 'true') {
             // Don't mount if you're not logged in
             return;
         }
@@ -79,7 +79,7 @@ class Game extends Component {
                         }).catch(err => console.error(err))
                     this.interval = setInterval(() => { // Movement call loop
                         // To die, to sleep - no more.
-                        if (alive == false) {
+                        if (alive === false) {
                             var data = { Username: sessionStorage.getItem("username"), Highscore: this.state.myScore } // Update Score
                             this.addScore(data); // Push score to HighScore DB
                             clearInterval(this.interval); // Clear interval so that it doesn't get called while we're dead
@@ -108,7 +108,7 @@ class Game extends Component {
                 for (var id in playersObj) {
                     var player = playersObj[id]; // Current player being rendered
                     var color = "black"; // Other Players
-                    if (id == this.state.myString) { // If the player I'm rendering is me. Color me Red. Update my Score.
+                    if (id === this.state.myString) { // If the player I'm rendering is me. Color me Red. Update my Score.
                         color = "red";
                         this.setState({ myScore: player.score });
                     }
@@ -117,7 +117,7 @@ class Game extends Component {
                     }
                     else if (player.death < 250) { // After a player dies they have 250 cycles for their explosion
                         this.explodeMe(context, player.x, player.y, player.death, color); // Explode them
-                        if (id == this.state.myString) { // If I died
+                        if (id === this.state.myString) { // If I died
                             alive = false; // Set alive to false to trigger the clearInterval
                         }
                     }
@@ -151,6 +151,8 @@ class Game extends Component {
                 case 32: // Space
                     this.movement.space = true;
                     break;
+                default:
+                    break;
             }
         })
 
@@ -171,6 +173,8 @@ class Game extends Component {
                     break;
                 case 32:
                     this.movement.space = false;
+                    break;
+                default:
                     break;
             }
         })
@@ -207,7 +211,7 @@ class Game extends Component {
 
     // Push (data) {username, score] to High Scores
     addScore(data) {
-        const response = fetch('/api/Scores', {
+        fetch('/api/Scores', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -219,7 +223,7 @@ class Game extends Component {
 
     render() {
         // If you aren't logged in, get redirected {Home}
-        if (sessionStorage.getItem("loggedIn") != 'true') {
+        if (sessionStorage.getItem("loggedIn") !== 'true') {
 
             return (
                 <Fragment>

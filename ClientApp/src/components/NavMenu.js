@@ -33,12 +33,12 @@ export class NavMenu extends Component {
 
         // Check in the database for a match to our sessionStorage username variable
         for (var item in data) {
-            if (data[item].username == username) { // if username matches a record
+            if (data[item].username === username) { // if username matches a record
 
                 // Add prompt to check for correct pass
 
                 // Delete the corresponding record using the records 'id'
-                const response = await fetch(`/api/Users/${data[item].id}`, {
+                await fetch(`/api/Users/${data[item].id}`, {
                     method: 'DELETE',
                     headers: {
                         'Accept': 'application/json',
@@ -63,7 +63,7 @@ export class NavMenu extends Component {
         const data = await response.json();
 
         for (var item in data) {
-            if (data[item].username == username) {
+            if (data[item].username === username) {
 
                 var newpass = window.prompt("New Password"); // Prompt for new password.
 
@@ -71,7 +71,7 @@ export class NavMenu extends Component {
                 var newdata = { "id": data[item].id, "username": data[item].username, "password": newpass };
 
                 // PUT updated 'newdata' to corresponding record id.
-                const response = await fetch(`/api/Users/${data[item].id}`, {
+                await fetch(`/api/Users/${data[item].id}`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
@@ -99,7 +99,7 @@ export class NavMenu extends Component {
                   <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/game">Game</NavLink>
+                    <NavLink tag={Link} className="text-dark" to="/game">Game</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/highscores">High Scores</NavLink>

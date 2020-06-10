@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Route, BrowserRouter as Router } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
-import Chat from './components/Chat';
 import Game from './components/Game';
 import { HighScores } from './components/HighScores';
 
