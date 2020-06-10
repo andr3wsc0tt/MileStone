@@ -3,11 +3,11 @@
 # Make a game to have fun!
 # The app is a game. And it's fun.
 
-#Installation Instruction:
-git clone
-npm install semantic-ui-react --save
-npm install semantic-ui-css --save
-PM>Update-Database
+#Installation Instruction:  
+git clone  
+npm install semantic-ui-react --save  
+npm install semantic-ui-css --save  
+PM>Update-Database  
 
 #Notes
 1. The load time is quite long.
