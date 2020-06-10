@@ -24,7 +24,7 @@ You can leave the playing field but BEWARE! "The outer box is the hard-deck for 
 7. You have to be focused on the canvas to play. And focused on the chat to type.
 8. If you want to play with others remotely, you have to switch the commented/uncommented lines our in Startup.cs. 
 9. The creds. for the Azure database are Username: Andrew Password:techCAREERS!
-10. If you die, you have to reload the page to respawn. Your chat logs get erase :( (Sorry but that's FREE for ya').
+10. If you die, you have to reload the page to respawn. Your chat logs get erase :( (Sorry but that's FREE for ya').  
 #Trello - https://trello.com/b/7dBjmoFc/milestone
 I worked alone so I didn't attach members to all cards.
 I also didn't use wireframes because there is no actual design or style.
