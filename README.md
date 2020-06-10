@@ -9,17 +9,22 @@ npm install semantic-ui-react --save
 npm install semantic-ui-css --save  
 PM>Update-Database  
 
+#Project Description:  
+An asteroids like dog-fighting real time multiplayer game. If you're testing it locally then you can open different tabs and see the realtime changes on all screens. There is a chat box to exclaim after your triumph!  
+
+You can leave the playing field but BEWARE! "The outer box is the hard-deck for this hop!. There'll be no engagement below that."  
+
 #Notes
 1. The load time is quite long.
 2. Not sure if it's just for me, but if you're not 'focused' the page when it's loading it won't load..?
-3. Sometimes the DB won't load before the modal does. You might hit enter without any validation errors but you still won't enter. Just wait 5-10 seconds and it should log you in once it connects.
+3. Sometimes the DB won't load before the modal does. You might hit enter without any validation errors but you still won't enter. Just wait 5-10 seconds and it should log you in once it connects. (Implemented last minute fix. It works remotely).
 4. You can load multiple players by copying the link and pasting it in a new tab. 
 5. It can lag badly when 3 or more players are present. 
 6. It can sometimes overload your operating system. There could be some memory leaks. It shouldn't be too bad but it starts it's own HubService and that can run after the program is closed.
 7. You have to be focused on the canvas to play. And focused on the chat to type.
-8. If you want to play with others remotely, you have to switch the commented lines our in Startup.cs. 
+8. If you want to play with others remotely, you have to switch the commented/uncommented lines our in Startup.cs. 
 9. The creds. for the Azure database are Username: Andrew Password:techCAREERS!
-
+10. If you die, you have to reload the page to respawn. Your chat logs get erase :( (Sorry but that's FREE for ya').
 #Trello - https://trello.com/b/7dBjmoFc/milestone
 I worked alone so I didn't attach members to all cards.
 I also didn't use wireframes because there is no actual design or style.
