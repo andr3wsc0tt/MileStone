@@ -25,7 +25,7 @@ I worked alone so I didn't attach members to all cards.
 I also didn't use wireframes because there is no actual design or style.
 
 #Testing
-Home Page (Login Modal) only accepts Usernames with correct passwords or Unique usernames with passwords that include 3 chars. one digit and one letter. No Blank fields.
+Home Page (Login Modal) only accepts Usernames with correct passwords or Unique usernames with passwords that include 3 chars. one digit and one letter (Changed from my original validation but it's all the same). No Blank fields.
 Any of these criteria being broken will prompt visual alerts.
 
 Test 1:  
