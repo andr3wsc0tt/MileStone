@@ -42,6 +42,6 @@ Error: "Password must be at least 3 characters, contain one letter, and one digi
 There aren't many place for user input except for the canvas, which needs to be determinate; So resolving all exceptions and logic errors has been attempted.
 
 ## Resources Used ##
-Chat.js - https://codingblast.com/asp-net-core-signalr-chat-react/ - It's exactly the same as the tutorial. But it's a trivial part of my site.
+Chat.js - https://codingblast.com/asp-net-core-signalr-chat-react/ - It's exactly the same as the tutorial. But it's a trivial part of my site.  
 GameHub.js - rotate() https://stackoverflow.com/questions/17410809/how-to-calculate-rotation-in-2d-in-javascript - Used this to calculate the rotation of the ships.
 
