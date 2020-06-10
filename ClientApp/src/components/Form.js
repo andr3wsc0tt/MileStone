@@ -84,7 +84,7 @@ class FormExample extends Component {
     render() {
         // Render the login page if you haven't logged in here, or if you haven't had session variable set.
         if (this.state.users === null) {
-            setTimeout(() => { }, 5000);
+            setTimeout(() => { }, 1000);
         }
         if (this.state.loggedIn === false && sessionStorage.getItem('loggedIn') !== 'true') {
             return (
