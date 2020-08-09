@@ -3,7 +3,7 @@
 # Make a game to have fun!
 # The app is a game. And it's fun.
 
-![Top Gun Game Demo]('Good Luck Mav.gif')
+![Top Gun Game Demo]('Good Luck Mav!.gif')
 
 #Installation Instruction:  
 git clone  
