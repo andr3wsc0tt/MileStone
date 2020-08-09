@@ -3,6 +3,8 @@
 # Make a game to have fun!
 # The app is a game. And it's fun.
 
+![Top Gun Game Demo](demo.gif)
+
 #Installation Instruction:  
 git clone  
 npm install semantic-ui-react --save  
